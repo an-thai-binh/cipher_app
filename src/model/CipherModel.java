@@ -5,26 +5,15 @@ import model.asymmetric.AsymmetricCipherFactory;
 import model.classical.*;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherFactory;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
-
-import java.security.Security;
 
 public class CipherModel implements ICipherModel {
 	private final ClassicalCipherFactory classicalCipherFactory;
 	private final SymmetricCipherFactory symmetricCipherFactory;
 	private final AsymmetricCipherFactory asymmetricCipherFactory;
 	public CipherModel() {
-		addProviders();
 		this.classicalCipherFactory = new ClassicalCipherFactory();
 		this.symmetricCipherFactory = new SymmetricCipherFactory();
 		this.asymmetricCipherFactory = new AsymmetricCipherFactory();
-	}
-
-	/**
-	 * addProviders	thêm các provider từ thư viên thứ 3
-	 */
-	private void addProviders() {
-		Security.addProvider(new BouncyCastleProvider());
 	}
 
 	/**
