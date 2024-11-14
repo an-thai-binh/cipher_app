@@ -24,15 +24,6 @@ public class SymmetricCipherFactory {
             case "RC4": {
                 return new RC4();
             }
-            case "SEED": {
-                return new SEED();
-            }
-            case "Camellia": {
-                return new Camellia();
-            }
-            case "Serpent": {
-                return new Serpent();
-            }
             default: {
                 return null;
             }
