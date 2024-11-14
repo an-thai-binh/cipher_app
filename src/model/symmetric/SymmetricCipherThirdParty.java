@@ -22,7 +22,7 @@ import java.util.Base64;
 import java.util.Random;
 
 public class SymmetricCipherThirdParty {
-    public static final String[] MODES = new String[]{""};
+    public static final String[] MODES = new String[]{"EBC", "CBC", "SIC"};
     public static final String[] PADDINGS = new String[]{"PKCS7Padding", "ISO10126d2Padding"};
     private BlockCipher engine;
     private BufferedBlockCipher cip;
@@ -254,6 +254,14 @@ public class SymmetricCipherThirdParty {
     public String decryptBase64(String text, boolean useIv) throws Exception {
         byte[] decodedBase64 = Base64.getDecoder().decode(text);
         return decrypt(decodedBase64, useIv);
+    }
+
+    public boolean encryptFile(String src, String dest, boolean useIv) {
+        return false;
+    }
+
+    public boolean decryptFile(String src, String dest, boolean useIv) {
+        return false;
     }
 
     public static void main(String[] args) throws Exception {
