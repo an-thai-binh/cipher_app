@@ -12,8 +12,8 @@ public class RSA extends AsymmetricCipher {
     @Override
     public List<String> getSupportedInstace() {
         List<String> result = new ArrayList<>();
-        result.add("RSA");
         result.add("RSA/ECB/PKCS1Padding");
+        result.add("RSA/ECB/OAEPPadding");
         return result;
     }
 
