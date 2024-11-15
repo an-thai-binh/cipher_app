@@ -15,6 +15,7 @@ import org.bouncycastle.crypto.params.KeyParameter;
 import org.bouncycastle.crypto.params.ParametersWithIV;
 import utils.CipherException;
 
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -256,23 +257,80 @@ public class SymmetricCipherThirdParty {
         return decrypt(decodedBase64, useIv);
     }
 
-    public boolean encryptFile(String src, String dest, boolean useIv) {
-        return false;
+    /**
+     * encryptFile  mã hóa file
+     * @param src   đường dẫn file nguồn
+     * @param dest  đường dẫn file đích
+     * @param useIv có sử dụng Iv không
+     * @return boolean
+     * @throws Exception
+     */
+    public boolean encryptFile(String src, String dest, boolean useIv) throws Exception {
+        if(useIv) {
+            cip.init(true, new ParametersWithIV(this.key, this.iv));
+        } else {
+            cip.init(true, this.key);
+        }
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest));
+        byte[] inBuffer = new byte[10 * 1024];
+        byte[] outBuffer = new byte[cip.getOutputSize(inBuffer.length)];
+        int bytesRead;
+        while((bytesRead = bis.read(inBuffer)) != -1) {
+            int processBytes = cip.processBytes(inBuffer, 0, bytesRead, outBuffer, 0);
+            bos.write(outBuffer, 0, processBytes);
+        }
+        bytesRead = cip.doFinal(outBuffer, 0);
+        bos.write(outBuffer, 0 , bytesRead);
+        bos.close();
+        bis.close();
+        return true;
     }
 
-    public boolean decryptFile(String src, String dest, boolean useIv) {
-        return false;
+    /**
+     * decryptFile  giải mã file
+     * @param src   đường dẫn file nguồn
+     * @param dest  đường dẫn file đích
+     * @param useIv có sử dụng Iv không
+     * @return boolean
+     * @throws Exception
+     */
+    public boolean decryptFile(String src, String dest, boolean useIv) throws Exception {
+        if(useIv) {
+            cip.init(false, new ParametersWithIV(this.key, this.iv));
+        } else {
+            cip.init(false, this.key);
+        }
+        BufferedInputStream bis = new BufferedInputStream(new FileInputStream(src));
+        BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dest));
+        byte[] inBuffer = new byte[10 * 1024];
+        byte[] outBuffer = new byte[cip.getOutputSize(inBuffer.length)];
+        int bytesRead;
+        while((bytesRead = bis.read(inBuffer)) != -1) {
+            int processBytes = cip.processBytes(inBuffer, 0, bytesRead, outBuffer, 0);
+            bos.write(outBuffer, 0, processBytes);
+        }
+        bytesRead = cip.doFinal(outBuffer, 0);
+        bos.write(outBuffer, 0 , bytesRead);
+        bos.close();
+        bis.close();
+        return true;
     }
 
     public static void main(String[] args) throws Exception {
         SymmetricCipherThirdParty cipher = new SymmetricCipherThirdParty("Serpent");
         KeyParameter key = cipher.genKey();
-//        String iv = "0000000000000000";
+        String iv = "0000000000000000";
         cipher.loadKey(key);
-//        cipher.setIv(iv);
-        cipher.setCipher("EBC", "PKCS7Padding");
-        String encrypted = cipher.encryptBase64("tôi là An Thái Bình", false);
-        System.out.println(encrypted);
-        System.out.println(cipher.decryptBase64(encrypted, false));
+        cipher.setIv(iv);
+        cipher.setCipher("CBC", "PKCS7Padding");
+//        String encrypted = cipher.encryptBase64("tôi là An Thái Bình", true);
+//        System.out.println(encrypted);
+//        System.out.println(cipher.decryptBase64(encrypted, true));
+        String src = "D:/Documents/TEMQA.pptx";
+        String desc = "D:/Documents/temqa-encrypt.pptx";
+        String desc2 = "D:/Documents/temqa-decrypt.pptx";
+        cipher.encryptFile(src, desc, true);
+        cipher.decryptFile(desc, desc2, true);
     }
  }
