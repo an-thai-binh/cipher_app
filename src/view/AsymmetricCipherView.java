@@ -6,9 +6,22 @@ import utils.IconUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.security.KeyPair;
+import java.util.Base64;
 
-public class AsymmetricCipherView extends JPanel {
+public class AsymmetricCipherView extends JPanel implements ActionListener {
+    private JComboBox cbbKeySize;
+    private JTextArea txtAreaPublicKey, txtAreaPrivateKey;
+    private JButton btnCopyPublicKey, btnCopyPrivateKey;
     private final AsymmetricCipher cipher;
     public AsymmetricCipherView(AsymmetricCipher cipher) {
         this.cipher = cipher;
@@ -47,7 +60,7 @@ public class AsymmetricCipherView extends JPanel {
         pnlKeySize.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         JLabel lblKeySize = new JLabel("Kích thước", JLabel.CENTER);
         lblKeySize.setFont(FontUtils.createRobotoFont("medium", 16f));
-        JComboBox cbbKeySize = new JComboBox(cipher.getSupportedKeySize().toArray(new Integer[0]));
+        cbbKeySize = new JComboBox(cipher.getSupportedKeySize().toArray(new Integer[0]));
         cbbKeySize.setPreferredSize(new Dimension(100, 30));
         cbbKeySize.setBackground(Color.WHITE);
         cbbKeySize.setRenderer(new DefaultListCellRenderer() {
@@ -64,13 +77,15 @@ public class AsymmetricCipherView extends JPanel {
         // gen key button
         JPanel pnlGenKey = new JPanel(new FlowLayout(FlowLayout.CENTER));
         JButton btnGenKey = new JButton("Tạo bộ key");
+        btnGenKey.setActionCommand("genKey");
+        btnGenKey.addActionListener(this);
         btnGenKey.setFont(FontUtils.createRobotoFont("medium", 16f));
         pnlGenKey.add(btnGenKey);
         pnlKeyTool.add(pnlGenKey);
         // public key area
         JPanel pnlPublicKey = new JPanel(new BorderLayout());
         pnlPublicKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        JTextArea txtAreaPublicKey = new JTextArea();   // text area
+        txtAreaPublicKey = new JTextArea();   // text area
         txtAreaPublicKey.setLineWrap(true);
         txtAreaPublicKey.setWrapStyleWord(true);
         txtAreaPublicKey.setFont(FontUtils.createRobotoFont("regular", 16f));
@@ -83,9 +98,13 @@ public class AsymmetricCipherView extends JPanel {
         publicKeyScrollPane.setBackground(null);
         pnlPublicKey.add(publicKeyScrollPane, BorderLayout.CENTER);
         JPanel pnlPublicKeyTool = new JPanel(new GridLayout(1, 2)); // key tool
-        JButton btnCopyPublicKey = new JButton("Sao chép");
+        btnCopyPublicKey = new JButton("Sao chép");
+        btnCopyPublicKey.setActionCommand("copyPublicKey");
+        btnCopyPublicKey.addActionListener(this);
         btnCopyPublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
         JButton btnSavePublicKey = new JButton("Lưu");
+        btnSavePublicKey.setActionCommand("savePublicKey");
+        btnSavePublicKey.addActionListener(this);
         btnSavePublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
         pnlPublicKeyTool.add(btnCopyPublicKey);
         pnlPublicKeyTool.add(btnSavePublicKey);
@@ -94,7 +113,7 @@ public class AsymmetricCipherView extends JPanel {
         // private key area
         JPanel pnlPrivateKey = new JPanel(new BorderLayout());
         pnlPrivateKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        JTextArea txtAreaPrivateKey = new JTextArea();   // text area
+        txtAreaPrivateKey = new JTextArea();   // text area
         txtAreaPrivateKey.setLineWrap(true);
         txtAreaPrivateKey.setWrapStyleWord(true);
         txtAreaPrivateKey.setFont(FontUtils.createRobotoFont("regular", 16f));
@@ -107,9 +126,13 @@ public class AsymmetricCipherView extends JPanel {
         privateKeyScrollPane.setBackground(null);
         pnlPrivateKey.add(privateKeyScrollPane, BorderLayout.CENTER);
         JPanel pnlPrivateKeyTool = new JPanel(new GridLayout(1, 2)); // key tool
-        JButton btnCopyPrivateKey = new JButton("Sao chép");
+        btnCopyPrivateKey = new JButton("Sao chép");
+        btnCopyPrivateKey.setActionCommand("copyPrivateKey");
+        btnCopyPrivateKey.addActionListener(this);
         btnCopyPrivateKey.setFont(FontUtils.createRobotoFont("medium", 16f));
         JButton btnSavePrivateKey = new JButton("Lưu");
+        btnSavePrivateKey.setActionCommand("savePrivateKey");
+        btnSavePrivateKey.addActionListener(this);
         btnSavePrivateKey.setFont(FontUtils.createRobotoFont("medium", 16f));
         pnlPrivateKeyTool.add(btnCopyPrivateKey);
         pnlPrivateKeyTool.add(btnSavePrivateKey);
@@ -356,5 +379,149 @@ public class AsymmetricCipherView extends JPanel {
         // thêm vào panel
         pnlKey.add(pnlKeyTool);
         panel.add(pnlKey);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        switch (cmd) {
+            case "genKey": {
+                int keySize = Integer.parseInt(cbbKeySize.getSelectedItem().toString());
+                try {
+                    KeyPair keyPair = cipher.genKey(keySize);
+                    String publicKey = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+                    String privateKey = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+                    txtAreaPublicKey.setText(publicKey);
+                    txtAreaPrivateKey.setText(privateKey);
+                } catch (Exception ex) {
+                    showErrorDialog(ex.getMessage());
+                }
+                break;
+            }
+            case "copyPublicKey": {
+                String text = txtAreaPublicKey.getText();
+                StringSelection selection = new StringSelection(text);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, null);
+                // kiểm tra nội dung trong clipboard
+                Transferable transferData = clipboard.getContents(null);
+                if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
+                        if(copiedText.equals(text)) {
+                            btnCopyPublicKey.setBackground(Color.decode("#EDEBB9"));
+                            Timer timer = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.start();
+                        } else {
+                            btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
+                        }
+                    } catch (Exception ex) {
+                        btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
+                    }
+                }
+                break;
+            }
+            case "copyPrivateKey": {
+                String text = txtAreaPrivateKey.getText();
+                StringSelection selection = new StringSelection(text);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, null);
+                // kiểm tra nội dung trong clipboard
+                Transferable transferData = clipboard.getContents(null);
+                if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
+                        if(copiedText.equals(text)) {
+                            btnCopyPrivateKey.setBackground(Color.decode("#EDEBB9"));
+                            Timer timer = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.start();
+                        } else {
+                            btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
+                        }
+                    } catch (Exception ex) {
+                        btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
+                    }
+                }
+                break;
+            }
+            case "savePublicKey": {
+                String text = txtAreaPublicKey.getText();
+                if(text.isEmpty()) {
+                    showErrorDialog("Không thể lưu key rỗng");
+                    break;
+                }
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Lưu key về máy tính");
+                int userOption = fileChooser.showSaveDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                        saveFile = new File(saveFile.getAbsolutePath() + ".dat");
+                    }
+                    // ghi key vào file
+                    try {
+                        FileOutputStream fos = new FileOutputStream(saveFile);
+                        PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"), true);
+                        pw.write(text);
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    }
+                }
+                break;
+            }
+            case "savePrivateKey": {
+                String text = txtAreaPrivateKey.getText();
+                if(text.isEmpty()) {
+                    showErrorDialog("Không thể lưu key rỗng");
+                    break;
+                }
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Lưu key về máy tính");
+                int userOption = fileChooser.showSaveDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                        saveFile = new File(saveFile.getAbsolutePath() + ".dat");
+                    }
+                    // ghi key vào file
+                    try {
+                        FileOutputStream fos = new FileOutputStream(saveFile);
+                        PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"), true);
+                        pw.write(text);
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    /**
+     * showErrorDialog	hiển thị cửa sổ thông báo lỗi
+     * @param message	thông báo
+     */
+    public void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this.getParent(), message, "Lỗi thực thi", JOptionPane.ERROR_MESSAGE);
     }
 }
