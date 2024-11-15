@@ -7,6 +7,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
+import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.util.List;
@@ -108,7 +109,7 @@ public abstract class AsymmetricCipher {
     public void loadPrivateKey(byte[] bytes) throws Exception {
         try {
             KeyFactory keyFactory = KeyFactory.getInstance(this.name);
-            X509EncodedKeySpec keySpec = new X509EncodedKeySpec(bytes);
+            PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(bytes);
             this.privateKey = keyFactory.generatePrivate(keySpec);
         } catch (NoSuchAlgorithmException e) {
             throw new Exception(CipherException.NO_SUCH_ALGORITHM);

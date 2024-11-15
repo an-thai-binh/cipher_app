@@ -16,12 +16,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Base64;
 
 public class AsymmetricCipherView extends JPanel implements ActionListener {
-    private JComboBox cbbKeySize;
-    private JTextArea txtAreaPublicKey, txtAreaPrivateKey;
-    private JButton btnCopyPublicKey, btnCopyPrivateKey;
+    private JComboBox cbbKeySize, cbbCipherMode;
+    private JTextArea txtAreaPublicKey, txtAreaPrivateKey, txtAreaEncryptKey, txtAreaDecryptKey, txtAreaInputEncrypt, txtAreaOutputEncrypt, txtAreaInputDecrypt, txtAreaOutputDecrypt;
+    private JButton btnCopyPublicKey, btnCopyPrivateKey, btnLoadEncryptKey, btnLoadDecryptKey;
     private final AsymmetricCipher cipher;
     public AsymmetricCipherView(AsymmetricCipher cipher) {
         this.cipher = cipher;
@@ -161,7 +162,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         JLabel lblCipherMode = new JLabel("Chọn chế độ:", JLabel.CENTER);
         lblCipherMode.setFont(FontUtils.createRobotoFont("medium", 16f));
         pnlCipherMode.add(lblCipherMode);
-        JComboBox cbbCipherMode = new JComboBox(cipher.getSupportedInstace().toArray(new String[0]));
+        cbbCipherMode = new JComboBox(cipher.getSupportedInstace().toArray(new String[0]));
         cbbCipherMode.setBackground(Color.WHITE);
         cbbCipherMode.setPreferredSize(new Dimension(300, 30));
         cbbCipherMode.setRenderer(new DefaultListCellRenderer() {
@@ -199,7 +200,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         lblEncryptTitle.setBorder(BorderFactory.createEmptyBorder(0,0, 10, 0));
         pnlEncrypt.add(lblEncryptTitle);
         // input
-        JTextArea txtAreaInputEncrypt = new JTextArea();   // text area
+        txtAreaInputEncrypt = new JTextArea();   // text area
         txtAreaInputEncrypt.setLineWrap(true);
         txtAreaInputEncrypt.setWrapStyleWord(true);
         txtAreaInputEncrypt.setFont(FontUtils.createRobotoFont("regular", 16f));
@@ -211,6 +212,12 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         inputEncryptScrollPane.setPreferredSize(new Dimension(0, 200));
         inputEncryptScrollPane.setBackground(null);
         pnlEncrypt.add(inputEncryptScrollPane);
+        // key label
+        JLabel lblEncryptKey = new JLabel("Nhập public key:", JLabel.CENTER);
+        lblEncryptKey.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        lblEncryptKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblEncryptKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlEncrypt.add(lblEncryptKey);
         // key
         renderEncryptKeyRow(pnlEncrypt);
         // action button
@@ -218,13 +225,14 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlEncryptAction.setBackground(null);
         JButton btnEncrypt = new JButton("Mã hóa");
         btnEncrypt.setActionCommand("encrypt");
+        btnEncrypt.addActionListener(this);
         btnEncrypt.setPreferredSize(new Dimension(200, 40));
         btnEncrypt.setBackground(Color.decode("#F3C623"));
         btnEncrypt.setFont(FontUtils.createRobotoFont("medium", 24f));
         pnlEncryptAction.add(btnEncrypt);
         pnlEncrypt.add(pnlEncryptAction);
         // output
-        JTextArea txtAreaOutputEncrypt = new JTextArea();   // text area
+        txtAreaOutputEncrypt = new JTextArea();   // text area
         txtAreaOutputEncrypt.setEditable(false);
         txtAreaOutputEncrypt.setLineWrap(true);
         txtAreaOutputEncrypt.setWrapStyleWord(true);
@@ -257,7 +265,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         lblDecryptTitle.setBorder(BorderFactory.createEmptyBorder(0,0, 10, 0));
         pnlDecrypt.add(lblDecryptTitle);
         // input
-        JTextArea txtAreaInputDecrypt = new JTextArea();   // text area
+        txtAreaInputDecrypt = new JTextArea();   // text area
         txtAreaInputDecrypt.setLineWrap(true);
         txtAreaInputDecrypt.setWrapStyleWord(true);
         txtAreaInputDecrypt.setFont(FontUtils.createRobotoFont("regular", 16f));
@@ -269,6 +277,12 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         inputDecryptScrollPane.setPreferredSize(new Dimension(0, 200));
         inputDecryptScrollPane.setBackground(null);
         pnlDecrypt.add(inputDecryptScrollPane);
+        // key label
+        JLabel lblDecryptKey = new JLabel("Nhập private key:", JLabel.CENTER);
+        lblDecryptKey.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+        lblDecryptKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblDecryptKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlDecrypt.add(lblDecryptKey);
         // key
         renderDecryptKeyRow(pnlDecrypt);
         // action button
@@ -276,13 +290,14 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlDecryptAction.setBackground(null);
         JButton btnDecrypt = new JButton("Giải mã");
         btnDecrypt.setActionCommand("decrypt");
+        btnDecrypt.addActionListener(this);
         btnDecrypt.setPreferredSize(new Dimension(200, 40));
         btnDecrypt.setBackground(Color.decode("#F3C623"));
         btnDecrypt.setFont(FontUtils.createRobotoFont("medium", 24f));
         pnlDecryptAction.add(btnDecrypt);
         pnlDecrypt.add(pnlDecryptAction);
         // output
-        JTextArea txtAreaOutputDecrypt = new JTextArea();   // text area
+        txtAreaOutputDecrypt = new JTextArea();   // text area
         txtAreaOutputDecrypt.setEditable(false);
         txtAreaOutputDecrypt.setLineWrap(true);
         txtAreaOutputDecrypt.setWrapStyleWord(true);
@@ -302,7 +317,6 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
     private void renderEncryptKeyRow(JPanel panel) {
         JPanel pnlKey = new JPanel();
         pnlKey.setLayout(new BoxLayout(pnlKey, BoxLayout.X_AXIS));
-        pnlKey.setBorder(BorderFactory.createEmptyBorder(10, 0 ,0 ,0));
         pnlKey.setBackground(null);
 
         // key icon
@@ -315,7 +329,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlKey.add(pnlKeyIcon);
 
         // key text area
-        JTextArea txtAreaEncryptKey = new JTextArea();
+        txtAreaEncryptKey = new JTextArea();
         txtAreaEncryptKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaEncryptKey.setLineWrap(true);
         txtAreaEncryptKey.setWrapStyleWord(true);
@@ -327,9 +341,9 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         // key tool
         JPanel pnlKeyTool = new JPanel(new GridLayout(1, 1));
         pnlKeyTool.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        JButton btnLoadEncryptKey = new JButton(IconUtils.LOAD_ICON);
-        btnLoadEncryptKey.setActionCommand("loadKey");
-//        btnLoadEncryptKey.addActionListener(this);
+        btnLoadEncryptKey = new JButton(IconUtils.LOAD_ICON);
+        btnLoadEncryptKey.setActionCommand("loadEncryptKey");
+        btnLoadEncryptKey.addActionListener(this);
         btnLoadEncryptKey.setPreferredSize(new Dimension(64, 44));
         btnLoadEncryptKey.setBackground(Color.decode("#D9D9D9"));
         btnLoadEncryptKey.setToolTipText("Tải key lên từ file .dat");
@@ -343,7 +357,6 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
     private void renderDecryptKeyRow(JPanel panel) {
         JPanel pnlKey = new JPanel();
         pnlKey.setLayout(new BoxLayout(pnlKey, BoxLayout.X_AXIS));
-        pnlKey.setBorder(BorderFactory.createEmptyBorder(10, 0 ,0 ,0));
         pnlKey.setBackground(null);
 
         // key icon
@@ -356,7 +369,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlKey.add(pnlKeyIcon);
 
         // key text area
-        JTextArea txtAreaDecryptKey = new JTextArea();
+        txtAreaDecryptKey = new JTextArea();
         txtAreaDecryptKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaDecryptKey.setLineWrap(true);
         txtAreaDecryptKey.setWrapStyleWord(true);
@@ -368,9 +381,9 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         // key tool
         JPanel pnlKeyTool = new JPanel(new GridLayout(1, 1));
         pnlKeyTool.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        JButton btnLoadDecryptKey = new JButton(IconUtils.LOAD_ICON);
-        btnLoadDecryptKey.setActionCommand("loadKey");
-//        btnLoadDecryptKey.addActionListener(this);
+        btnLoadDecryptKey = new JButton(IconUtils.LOAD_ICON);
+        btnLoadDecryptKey.setActionCommand("loadDecryptKey");
+        btnLoadDecryptKey.addActionListener(this);
         btnLoadDecryptKey.setPreferredSize(new Dimension(64, 44));
         btnLoadDecryptKey.setBackground(Color.decode("#D9D9D9"));
         btnLoadDecryptKey.setToolTipText("Tải key lên từ file .dat");
@@ -511,6 +524,108 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
                     } catch (UnsupportedEncodingException ex) {
                         showErrorDialog("Kiểu encode không được hỗ trợ");
                     }
+                }
+                break;
+            }
+            case "loadEncryptKey": {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Tải key từ máy tính");
+                int userOption = fileChooser.showOpenDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                        showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
+                        break;
+                    }
+                    // đọc key từ file
+                    try {
+                        FileInputStream fis = new FileInputStream(saveFile);
+                        BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                        txtAreaEncryptKey.setText("");
+                        String line;
+                        ArrayList<String> lineList = new ArrayList<>();
+                        while((line = br.readLine()) != null) {
+                            lineList.add(line);
+                        }
+                        for(int i = 0; i < lineList.size(); i++) {
+                            txtAreaEncryptKey.append(lineList.get(i));
+                            if(i < lineList.size() - 1) txtAreaEncryptKey.append("\n");    // chỉ thêm \n ở dòng cuối cùng
+                        }
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    } catch (IOException ex) {
+                        showErrorDialog("Có lỗi xảy ra trong quá trình đọc file");
+                    }
+                }
+                break;
+            }
+            case "loadDecryptKey": {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Tải key từ máy tính");
+                int userOption = fileChooser.showOpenDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                        showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
+                        break;
+                    }
+                    // đọc key từ file
+                    try {
+                        FileInputStream fis = new FileInputStream(saveFile);
+                        BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                        txtAreaDecryptKey.setText("");
+                        String line;
+                        ArrayList<String> lineList = new ArrayList<>();
+                        while((line = br.readLine()) != null) {
+                            lineList.add(line);
+                        }
+                        for(int i = 0; i < lineList.size(); i++) {
+                            txtAreaDecryptKey.append(lineList.get(i));
+                            if(i < lineList.size() - 1) txtAreaDecryptKey.append("\n");    // chỉ thêm \n ở dòng cuối cùng
+                        }
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    } catch (IOException ex) {
+                        showErrorDialog("Có lỗi xảy ra trong quá trình đọc file");
+                    }
+                }
+                break;
+            }
+            case "encrypt": {
+                try {
+                    cipher.setInstance(cbbCipherMode.getSelectedItem().toString()); // set instance
+                    byte[] encryptKeyBytes = Base64.getDecoder().decode(txtAreaEncryptKey.getText());   // set encrypt key
+                    cipher.loadPublicKey(encryptKeyBytes);
+                    String input = txtAreaInputEncrypt.getText();
+                    if(input.isEmpty()) {
+                       showErrorDialog("Vui lòng nhập nội dung cần mã hóa");
+                       break;
+                    }
+                    txtAreaOutputEncrypt.setText(cipher.encryptBase64(input));
+                } catch (Exception ex) {
+                    showErrorDialog(ex.getMessage());
+                }
+                break;
+            }
+            case "decrypt": {
+                try {
+                    cipher.setInstance(cbbCipherMode.getSelectedItem().toString()); // set instance
+                    byte[] decryptKeyBytes = Base64.getDecoder().decode(txtAreaDecryptKey.getText());   // set decrypt key
+                    cipher.loadPrivateKey(decryptKeyBytes);
+                    String input = txtAreaInputDecrypt.getText();
+                    if(input.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập nội dung cần mã hóa");
+                        break;
+                    }
+                    txtAreaOutputDecrypt.setText(cipher.decryptBase64(input));
+                } catch (Exception ex) {
+                    showErrorDialog(ex.getMessage());
                 }
                 break;
             }
