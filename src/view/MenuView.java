@@ -6,6 +6,8 @@ import utils.FontUtils;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MenuView extends JPanel {
     private final ActionListener listener;
@@ -100,7 +102,10 @@ public class MenuView extends JPanel {
         JPanel pnlRow2Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         pnlRow2Btn.setBackground(Color.decode("#F4F6FF"));
         JButton btnSymmetric;
-        for(String c: CipherSupport.SYMMETRIC_CIPHERS) {
+        ArrayList<String> symmetricCipherList = new ArrayList<>();
+        symmetricCipherList.addAll(Arrays.asList(CipherSupport.SYMMETRIC_CIPHERS));
+        symmetricCipherList.addAll(Arrays.asList(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY));
+        for(String c: symmetricCipherList) {
             btnSymmetric = new JButton(c);
             btnSymmetric.setBackground(Color.WHITE);
             btnSymmetric.setFont(FontUtils.createRobotoFont("regular", 20f));

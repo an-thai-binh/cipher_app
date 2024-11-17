@@ -5,6 +5,7 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.CeasarCipher;
 import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
+import model.symmetric.SymmetricCipherThirdParty;
 import utils.CipherSupport;
 import utils.LanguageSupport;
 import view.ICipherView;
@@ -64,6 +65,18 @@ public class CipherController implements ICipherController {
 				SymmetricCipher cipher = model.createSymmetricCipher(cmd);
 				if (cipher != null) {
 					view.createSymmetricCipherView(cipher);
+				} else {
+					view.showErrorDialog("Không khởi tạo được thuật toán");
+				}
+			} else if(isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY, cmd)) {
+                SymmetricCipherThirdParty cipher = null;
+                try {
+                    cipher = model.createSymmetricCipherThirdParty(cmd);
+                } catch (Exception ex) {
+                    view.showErrorDialog(ex.getMessage());
+                }
+                if (cipher != null) {
+					view.createSymmetricCipherThirdPartyView(cipher);
 				} else {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}

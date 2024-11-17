@@ -29,4 +29,8 @@ public class SymmetricCipherFactory {
             }
         }
     }
+
+    public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
+        return new SymmetricCipherThirdParty(cipher);
+    }
 }

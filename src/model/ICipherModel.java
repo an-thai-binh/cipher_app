@@ -3,6 +3,7 @@ package model;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
+import model.symmetric.SymmetricCipherThirdParty;
 
 public interface ICipherModel {
 	/**
@@ -21,6 +22,13 @@ public interface ICipherModel {
 	 * @return SymmetricCipher
 	 */
 	public SymmetricCipher createSymmetricCipher(String cipher);
+
+	/**
+	 * createSymmetricCipherThirdParty	khởi tạo đối tượng mã hóa đối xứng hiện đại của thư viện thứ 3
+	 * @param cipher	phương pháp mã hóa
+	 * @return SymmetricCipher
+	 */
+	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception;
 
 	/**
 	 * createAsymmetricCipher	khởi tạo đối tượng mã hóa bất đối xứng

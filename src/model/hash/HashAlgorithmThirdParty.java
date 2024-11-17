@@ -12,7 +12,7 @@ import java.io.FileInputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 
-public class HashAlgorithmThirdParty {
+public class HashAlgorithmThirdParty implements IHashAlgorithm {
     private String name;
     private Digest digest;
     public HashAlgorithmThirdParty(String name) throws Exception {
@@ -24,6 +24,7 @@ public class HashAlgorithmThirdParty {
      * getName  lấy ra tên thuật toán hash
      * @return
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -33,6 +34,7 @@ public class HashAlgorithmThirdParty {
      * @param instance  instance
      * @throws Exception    thuật toán không hỗ trợ
      */
+    @Override
     public void setInstance(String instance) throws Exception {
         switch (instance) {
             case "Tiger": {
@@ -58,6 +60,7 @@ public class HashAlgorithmThirdParty {
      * @param text  văn bản đầu vào
      * @return String
      */
+    @Override
     public String hash(String text) {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         digest.update(data, 0, data.length);
@@ -73,6 +76,7 @@ public class HashAlgorithmThirdParty {
      * @return String
      * @throws Exception    file không hợp lệ
      */
+    @Override
     public String hashFile(String src) throws Exception {
         setInstance(this.name);
         File file = new File(src);

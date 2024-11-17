@@ -11,7 +11,7 @@ import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class HashAlgorithm {
+public class HashAlgorithm implements IHashAlgorithm {
     private String name;
     private MessageDigest md;
     public HashAlgorithm(String name) {
@@ -22,6 +22,7 @@ public class HashAlgorithm {
      * getName  lấy ra tên thuật toán hash
      * @return
      */
+    @Override
     public String getName() {
         return this.name;
     }
@@ -31,6 +32,7 @@ public class HashAlgorithm {
      * @param instance  instance
      * @throws Exception    thuật toán không hỗ trợ
      */
+    @Override
     public void setInstance(String instance) throws Exception {
         try {
             md = MessageDigest.getInstance(instance);
@@ -44,6 +46,7 @@ public class HashAlgorithm {
      * @param text  văn bản đầu vào
      * @return String
      */
+    @Override
     public String hash(String text) {
         byte[] data = text.getBytes(StandardCharsets.UTF_8);
         byte[] digest = md.digest(data);
@@ -57,6 +60,7 @@ public class HashAlgorithm {
      * @return String
      * @throws Exception    file không hợp lệ
      */
+    @Override
     public String hashFile(String src) throws Exception {
         File file = new File(src);
         if(!file.exists() || !file.isFile()) {

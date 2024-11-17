@@ -3,6 +3,7 @@ package view;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
+import model.symmetric.SymmetricCipherThirdParty;
 
 import java.awt.event.ActionListener;
 
@@ -29,6 +30,12 @@ public interface ICipherView {
 	 * @param symmetricCipher	đối tượng thực hiện
 	 */
 	public void createSymmetricCipherView(SymmetricCipher symmetricCipher);
+
+	/**
+	 * createSymmetricCipherView	khởi tạo giao diện trang mã hóa
+	 * @param symmetricCipher	đối tượng thực hiện
+	 */
+	public void createSymmetricCipherThirdPartyView(SymmetricCipherThirdParty symmetricCipher);
 
 	/**
 	 * createAsymmetricCipherView	khởi tạo giao diện trang mã hóa

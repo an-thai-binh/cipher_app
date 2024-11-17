@@ -5,6 +5,7 @@ import model.asymmetric.AsymmetricCipherFactory;
 import model.classical.*;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherFactory;
+import model.symmetric.SymmetricCipherThirdParty;
 
 public class CipherModel implements ICipherModel {
 	private final ClassicalCipherFactory classicalCipherFactory;
@@ -37,6 +38,16 @@ public class CipherModel implements ICipherModel {
 	@Override
 	public SymmetricCipher createSymmetricCipher(String cipher) {
 		return symmetricCipherFactory.createSymmetricCipher(cipher);
+	}
+
+	/**
+	 * createSymmetricCipherThirdParty	khởi tạo đối tượng mã hóa đối xứng hiện đại của thư viện thứ 3
+	 * @param cipher	phương pháp mã hóa
+	 * @return SymmetricCipher
+	 */
+	@Override
+	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
+		return symmetricCipherFactory.createSymmetricCipherThirdParty(cipher);
 	}
 
 	/**

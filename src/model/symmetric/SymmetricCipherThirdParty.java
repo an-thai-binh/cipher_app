@@ -18,12 +18,10 @@ import utils.CipherException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Random;
+import java.util.*;
 
 public class SymmetricCipherThirdParty {
-    public static final String[] MODES = new String[]{"EBC", "CBC", "SIC"};
+    public static final String[] MODES = new String[]{"ECB", "CBC", "SIC"};
     public static final String[] PADDINGS = new String[]{"PKCS7Padding", "ISO10126d2Padding"};
     private BlockCipher engine;
     private BufferedBlockCipher cip;
@@ -51,6 +49,24 @@ public class SymmetricCipherThirdParty {
     }
 
     /**
+     * getName  lấy ra tên giải thuật
+     * @return  String
+     */
+    public String getName() {
+        return engine.getAlgorithmName();
+    }
+
+    public List<Integer> getSupportedKeySize() {
+        List<Integer> result = new ArrayList<>();
+        result.add(engine.getBlockSize() * 8);
+        return result;
+    }
+
+    public int getSupportedIvOrNonceSize() {
+        return engine.getBlockSize();
+    }
+
+    /**
      * createMode   khởi tạo mode cùng thuật toán
      * @param name  tên mode
      * @param cipher    thuật toán thực hiện
@@ -59,7 +75,7 @@ public class SymmetricCipherThirdParty {
      */
     private BlockCipher createMode(String name, BlockCipher cipher) throws Exception {
         switch (name) {
-            case "EBC": {
+            case "ECB": {
                 return cipher;
             }
             case "CBC": {
@@ -144,7 +160,7 @@ public class SymmetricCipherThirdParty {
      * generateRandomIv tạo iv ngẫu nhiên
      * @return String
      */
-    private String generateRandomIv() {
+    public String generateRandomIv() {
         String charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         Random random = new Random();
         int blockSize = engine.getBlockSize();

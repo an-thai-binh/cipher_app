@@ -3,6 +3,7 @@ package view;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
+import model.symmetric.SymmetricCipherThirdParty;
 import utils.IconUtils;
 
 import javax.swing.*;
@@ -78,6 +79,22 @@ public class CipherView extends JFrame implements ICipherView {
 		cipherView.setSize(1000, 834);
 		cipherView.setLocationRelativeTo(null);
 		cipherView.setContentPane(new SymmetricCipherView(symmetricCipher));
+		cipherView.setTitle("Mã hóa " + symmetricCipher.getName());
+		cipherView.setVisible(true);
+	}
+
+	/**
+	 * createSymmetricCipherView	khởi tạo giao diện trang mã hóa
+	 * @param symmetricCipher	đối tượng thực hiện
+	 */
+	@Override
+	public void createSymmetricCipherThirdPartyView(SymmetricCipherThirdParty symmetricCipher) {
+		JFrame cipherView = new JFrame();
+		cipherView.setIconImage(IconUtils.LOGO_CIPHER.getImage());
+		cipherView.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		cipherView.setSize(1000, 834);
+		cipherView.setLocationRelativeTo(null);
+		cipherView.setContentPane(new SymmetricCipherThirdPartyView(symmetricCipher));
 		cipherView.setTitle("Mã hóa " + symmetricCipher.getName());
 		cipherView.setVisible(true);
 	}
