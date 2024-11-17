@@ -1,20 +1,14 @@
 package model;
 
 import model.asymmetric.AsymmetricCipher;
-import model.asymmetric.AsymmetricCipherFactory;
-import model.classical.*;
+import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherFactory;
 import model.symmetric.SymmetricCipherThirdParty;
 
 public class CipherModel implements ICipherModel {
-	private final ClassicalCipherFactory classicalCipherFactory;
-	private final SymmetricCipherFactory symmetricCipherFactory;
-	private final AsymmetricCipherFactory asymmetricCipherFactory;
+	private final CipherFactory cipherFactory;
 	public CipherModel() {
-		this.classicalCipherFactory = new ClassicalCipherFactory();
-		this.symmetricCipherFactory = new SymmetricCipherFactory();
-		this.asymmetricCipherFactory = new AsymmetricCipherFactory();
+		this.cipherFactory = new CipherFactory();
 	}
 
 	/**
@@ -27,7 +21,7 @@ public class CipherModel implements ICipherModel {
 	 */
 	@Override
 	public IClassicalCipher createClassicalCipher(String cipher, int languageCode, int order) throws Exception {
-		return classicalCipherFactory.createClassicalCipher(cipher, languageCode, order);
+		return cipherFactory.createClassicalCipher(cipher, languageCode, order);
 	}
 
 	/**
@@ -37,7 +31,7 @@ public class CipherModel implements ICipherModel {
 	 */
 	@Override
 	public SymmetricCipher createSymmetricCipher(String cipher) {
-		return symmetricCipherFactory.createSymmetricCipher(cipher);
+		return cipherFactory.createSymmetricCipher(cipher);
 	}
 
 	/**
@@ -47,7 +41,7 @@ public class CipherModel implements ICipherModel {
 	 */
 	@Override
 	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
-		return symmetricCipherFactory.createSymmetricCipherThirdParty(cipher);
+		return cipherFactory.createSymmetricCipherThirdParty(cipher);
 	}
 
 	/**
@@ -57,6 +51,6 @@ public class CipherModel implements ICipherModel {
 	 */
 	@Override
 	public AsymmetricCipher createAsymmetric(String cipher) {
-		return asymmetricCipherFactory.createAsymmetricCipher(cipher);
+		return cipherFactory.createAsymmetricCipher(cipher);
 	}
 }
