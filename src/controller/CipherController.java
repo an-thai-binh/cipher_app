@@ -78,7 +78,7 @@ public class CipherController implements ICipherController {
 				} else {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}
-			}else {
+			} else {
 				view.showErrorDialog("Phương pháp không hỗ trợ");
 			}
 		}

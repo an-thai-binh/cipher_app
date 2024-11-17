@@ -70,7 +70,7 @@ public class SymmetricCipherView extends JPanel {
         }
 
         /**
-         * init hiển thị giao diện mã hóa đối xứng (thao tác với văn bản)
+         * initText hiển thị giao diện mã hóa đối xứng (thao tác với văn bản)
          */
         private void initText() {
             renderTitleRow();

@@ -7,6 +7,7 @@ public class CipherSupport {
     public final static String[] ASYMMETRIC_CIPHERS = new String[]{"RSA"};
     public final static String[] HASH_ALGORITHMS = new String[]{"MD2", "MD5", "SHA"};
     public final static String[] HASH_ALGORITHMS_THIRD_PARTY = new String[]{"Tiger", "Blake2s", "Whirlpool"};
+    public final static String[] SHA_DIGESTS = new String[]{"SHA-1", "SHA-224", "SHA-256", "SHA-384", "SHA-512", "SHA-512/224", "SHA-512/256"};
 
     /**
      * isContains	kiểm tra giải thuật này có hỗ trợ không
