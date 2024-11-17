@@ -25,7 +25,7 @@ public class MenuView extends JPanel {
         renderClassicalRow();
         renderSymmetricRow();
         renderAsymmetricRow();
-        renderSymmetricRow();
+        renderHashRow();
         renderSymmetricRow();
     }
 
@@ -57,7 +57,7 @@ public class MenuView extends JPanel {
         pnlRow1.setPreferredSize(new Dimension(0, 70));
         pnlRow1.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         pnlRow1.setBackground(Color.WHITE);
-        // JLabel dòng 1
+        // JLabel
         JLabel lblRow1Type = new JLabel("MÃ HÓA CỔ ĐIỂN", JLabel.CENTER);
         lblRow1Type.setFont(FontUtils.createRobotoFont("medium", 24f));
         lblRow1Type.setForeground(Color.WHITE);
@@ -65,10 +65,10 @@ public class MenuView extends JPanel {
         lblRow1Type.setOpaque(true);
         lblRow1Type.setPreferredSize(new Dimension(400, 0));
         pnlRow1.add(lblRow1Type, BorderLayout.WEST);
-        // các JButton của dòng 1
+        // các JButton
         JPanel pnlRow1Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         pnlRow1Btn.setBackground(Color.decode("#F4F6FF"));
-        pnlRow1Btn.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        pnlRow1Btn.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
         JButton btnClassical;
         for(String c: CipherSupport.CLASSICAL_CIPHERS) {
             btnClassical = new JButton(c);
@@ -90,7 +90,7 @@ public class MenuView extends JPanel {
         pnlRow2.setPreferredSize(new Dimension(0, 70));
         pnlRow2.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         pnlRow2.setBackground(Color.WHITE);
-        // JLabel dòng 2
+        // JLabel
         JLabel lblRow2Type = new JLabel("MÃ HÓA ĐỐI XỨNG HIỆN ĐẠI", JLabel.CENTER);
         lblRow2Type.setFont(FontUtils.createRobotoFont("medium", 24f));
         lblRow2Type.setForeground(Color.WHITE);
@@ -98,7 +98,7 @@ public class MenuView extends JPanel {
         lblRow2Type.setOpaque(true);
         lblRow2Type.setPreferredSize(new Dimension(400, 0));
         pnlRow2.add(lblRow2Type, BorderLayout.WEST);
-        // các JButton của dòng 2
+        // các JButton
         JPanel pnlRow2Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         pnlRow2Btn.setBackground(Color.decode("#F4F6FF"));
         JButton btnSymmetric;
@@ -125,7 +125,7 @@ public class MenuView extends JPanel {
         pnlRow3.setPreferredSize(new Dimension(0, 70));
         pnlRow3.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         pnlRow3.setBackground(Color.WHITE);
-        // JLabel dòng 2
+        // JLabel
         JLabel lblRow3Type = new JLabel("MÃ HÓA BẤT ĐỐI XỨNG", JLabel.CENTER);
         lblRow3Type.setFont(FontUtils.createRobotoFont("medium", 24f));
         lblRow3Type.setForeground(Color.WHITE);
@@ -133,7 +133,7 @@ public class MenuView extends JPanel {
         lblRow3Type.setOpaque(true);
         lblRow3Type.setPreferredSize(new Dimension(400, 0));
         pnlRow3.add(lblRow3Type, BorderLayout.WEST);
-        // các JButton của dòng 2
+        // các JButton
         JPanel pnlRow3Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         pnlRow3Btn.setBackground(Color.decode("#F4F6FF"));
         JButton btnAsymmetric;
@@ -147,5 +147,38 @@ public class MenuView extends JPanel {
         }
         pnlRow3.add(pnlRow3Btn, BorderLayout.CENTER);
         this.add(pnlRow3);
+    }
+
+    private void renderHashRow() {
+        JPanel pnlRow4 = new JPanel(new BorderLayout());
+        pnlRow4.setPreferredSize(new Dimension(0, 70));
+        pnlRow4.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlRow4.setBackground(Color.WHITE);
+        // JLabel
+        JLabel lblRow4Type = new JLabel("GIẢI THUẬT HASH", JLabel.CENTER);
+        lblRow4Type.setFont(FontUtils.createRobotoFont("medium", 24f));
+        lblRow4Type.setForeground(Color.WHITE);
+        lblRow4Type.setBackground(Color.decode("#10375C"));
+        lblRow4Type.setOpaque(true);
+        lblRow4Type.setPreferredSize(new Dimension(400, 0));
+        pnlRow4.add(lblRow4Type, BorderLayout.WEST);
+        // các JButton
+        JPanel pnlRow4Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        pnlRow4Btn.setBackground(Color.decode("#F4F6FF"));
+        pnlRow4Btn.setBorder(BorderFactory.createEmptyBorder(0, 100, 0, 100));
+        JButton btnAsymmetric;
+        ArrayList<String> hashAlgorithmList = new ArrayList<>();
+        hashAlgorithmList.addAll(Arrays.asList(CipherSupport.HASH_ALGORITHMS));
+        hashAlgorithmList.addAll(Arrays.asList(CipherSupport.HASH_ALGORITHMS_THIRD_PARTY));
+        for(String c: hashAlgorithmList) {
+            btnAsymmetric = new JButton(c);
+            btnAsymmetric.setBackground(Color.WHITE);
+            btnAsymmetric.setFont(FontUtils.createRobotoFont("regular", 20f));
+            btnAsymmetric.setPreferredSize(new Dimension(140, 30));
+            btnAsymmetric.addActionListener(this.listener);
+            pnlRow4Btn.add(btnAsymmetric);
+        }
+        pnlRow4.add(pnlRow4Btn, BorderLayout.CENTER);
+        this.add(pnlRow4);
     }
 }

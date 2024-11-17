@@ -3,7 +3,11 @@ package model;
 import model.asymmetric.AsymmetricCipher;
 import model.asymmetric.RSA;
 import model.classical.*;
+import model.hash.HashAlgorithm;
+import model.hash.HashAlgorithmThirdParty;
+import model.hash.IHashAlgorithm;
 import model.symmetric.*;
+import utils.CipherSupport;
 
 public class CipherFactory {
     public IClassicalCipher createClassicalCipher(String cipher, int languageCode, int order) throws Exception {
@@ -71,5 +75,12 @@ public class CipherFactory {
                 return null;
             }
         }
+    }
+
+    public IHashAlgorithm createHashAlgorithm(String algorithm) {
+        if(CipherSupport.isContains(CipherSupport.HASH_ALGORITHMS_THIRD_PARTY, algorithm)) {
+            return new HashAlgorithmThirdParty(algorithm);
+        }
+        return new HashAlgorithm(algorithm);
     }
 }

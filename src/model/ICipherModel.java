@@ -2,6 +2,7 @@ package model;
 
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
+import model.hash.IHashAlgorithm;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 
@@ -26,14 +27,21 @@ public interface ICipherModel {
 	/**
 	 * createSymmetricCipherThirdParty	khởi tạo đối tượng mã hóa đối xứng hiện đại của thư viện thứ 3
 	 * @param cipher	phương pháp mã hóa
-	 * @return SymmetricCipher
+	 * @return SymmetricCipherThirdParty
 	 */
 	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception;
 
 	/**
 	 * createAsymmetricCipher	khởi tạo đối tượng mã hóa bất đối xứng
 	 * @param cipher	phương pháp mã hóa
-	 * @return SymmetricCipher
+	 * @return AsymmetricCipher
 	 */
     public AsymmetricCipher createAsymmetric(String cipher);
+
+	/**
+	 * createHashAlgorithm	khởi tạo giải thuật hash
+	 * @param algorithm	giải thuật
+	 * @return IHashAlgorithm
+	 */
+	public IHashAlgorithm createHashAlgorithm(String algorithm);
 }

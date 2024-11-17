@@ -15,9 +15,8 @@ import java.nio.charset.StandardCharsets;
 public class HashAlgorithmThirdParty implements IHashAlgorithm {
     private String name;
     private Digest digest;
-    public HashAlgorithmThirdParty(String name) throws Exception {
+    public HashAlgorithmThirdParty(String name) {
         this.name = name;
-        setInstance(this.name); // check thuật toán có hỗ trợ không
     }
 
     /**

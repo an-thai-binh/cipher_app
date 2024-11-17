@@ -2,11 +2,13 @@ package view;
 
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
+import model.hash.IHashAlgorithm;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 import utils.IconUtils;
 import view.asymmetric.AsymmetricCipherView;
 import view.classical.ClassicalCipherView;
+import view.hash.HashAlgorithmView;
 import view.symmetric.SymmetricCipherThirdPartyView;
 import view.symmetric.SymmetricCipherView;
 
@@ -115,6 +117,21 @@ public class CipherView extends JFrame implements ICipherView {
 		cipherView.setLocationRelativeTo(null);
 		cipherView.setContentPane(new AsymmetricCipherView(asymmetricCipher));
 		cipherView.setTitle("Mã hóa " + asymmetricCipher.getName());
+		cipherView.setVisible(true);
+	}
+
+	/**
+	 * createHashAlgorithmView	khởi tạo giao diện giải thuật hash
+	 * @param algorithm	đối tượng thực hiện
+	 */
+	public void createHashAlgorithmView(IHashAlgorithm algorithm) {
+		JFrame cipherView = new JFrame();
+		cipherView.setIconImage(IconUtils.LOGO_CIPHER.getImage());
+		cipherView.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		cipherView.setSize(571, 834);
+		cipherView.setLocationRelativeTo(null);
+		cipherView.setContentPane(new HashAlgorithmView(algorithm));
+		cipherView.setTitle("Giải thuật " + algorithm.getName());
 		cipherView.setVisible(true);
 	}
 
