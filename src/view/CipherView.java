@@ -5,9 +5,12 @@ import model.classical.IClassicalCipher;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 import utils.IconUtils;
+import view.asymmetric.AsymmetricCipherView;
+import view.classical.ClassicalCipherView;
+import view.symmetric.SymmetricCipherThirdPartyView;
+import view.symmetric.SymmetricCipherView;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class CipherView extends JFrame implements ICipherView {
@@ -84,7 +87,7 @@ public class CipherView extends JFrame implements ICipherView {
 	}
 
 	/**
-	 * createSymmetricCipherView	khởi tạo giao diện trang mã hóa
+	 * createSymmetricCipherThirdPartyView	khởi tạo giao diện trang mã hóa
 	 * @param symmetricCipher	đối tượng thực hiện
 	 */
 	@Override

@@ -1,4 +1,4 @@
-package view;
+package view.asymmetric;
 
 import model.asymmetric.AsymmetricCipher;
 import utils.FontUtils;

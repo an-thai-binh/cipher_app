@@ -32,7 +32,7 @@ public interface ICipherView {
 	public void createSymmetricCipherView(SymmetricCipher symmetricCipher);
 
 	/**
-	 * createSymmetricCipherView	khởi tạo giao diện trang mã hóa
+	 * createSymmetricCipherThirdPartyView	khởi tạo giao diện trang mã hóa
 	 * @param symmetricCipher	đối tượng thực hiện
 	 */
 	public void createSymmetricCipherThirdPartyView(SymmetricCipherThirdParty symmetricCipher);

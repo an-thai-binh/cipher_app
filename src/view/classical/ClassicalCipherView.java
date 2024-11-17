@@ -1,4 +1,4 @@
-package view;
+package view.classical;
 
 import model.classical.*;
 import utils.*;

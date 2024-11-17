@@ -1,10 +1,12 @@
-package view;
+package view.symmetric;
 
-import model.symmetric.SymmetricCipherThirdParty;
-import org.bouncycastle.crypto.params.KeyParameter;
+import model.symmetric.SymmetricCipher;
 import utils.FontUtils;
 import utils.IconUtils;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,12 +22,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Base64;
+import java.util.List;
 
-public class SymmetricCipherThirdPartyView extends JPanel {
-    private final SymmetricCipherThirdParty cipher;
+public class SymmetricCipherView extends JPanel {
+    private final SymmetricCipher cipher;
     private CardLayout cardLayout;
 
-    public SymmetricCipherThirdPartyView(SymmetricCipherThirdParty cipher) {
+    public SymmetricCipherView(SymmetricCipher cipher) {
         this.cipher = cipher;
         init();
     }
@@ -45,7 +48,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
     }
 
     class SymmetricTypeView extends JPanel implements ActionListener {
-        private final SymmetricCipherThirdParty cipher;
+        private final SymmetricCipher cipher;
         private boolean isTextPanel;
         private DefaultComboBoxModel<String> defaultPaddingModel, noPaddingModel;
         private JComboBox cbbKeySize, cbbMode, cbbPadding;
@@ -54,13 +57,13 @@ public class SymmetricCipherThirdPartyView extends JPanel {
         private JButton btnGenIv, btnCopyKey, btnOpenFileLocation;
         private JLabel lblStatus, lblResultPath;
 
-        public SymmetricTypeView(SymmetricCipherThirdParty cipher, boolean isTextPanel) {
+        public SymmetricTypeView(SymmetricCipher cipher, boolean isTextPanel) {
             this.cipher = cipher;
             this.isTextPanel = isTextPanel;
-            this.defaultPaddingModel = new DefaultComboBoxModel<>(SymmetricCipherThirdParty.PADDINGS);
+            this.defaultPaddingModel = new DefaultComboBoxModel<>(cipher.getSupportedPadding().toArray(new String[0]));
             this.noPaddingModel = new DefaultComboBoxModel<>(new String[]{"NoPadding"});
             this.renderSelf();
-            if (isTextPanel)
+            if(isTextPanel)
                 initText();
             else
                 initFile();
@@ -96,11 +99,10 @@ public class SymmetricCipherThirdPartyView extends JPanel {
 
         /**
          * renderMarginRow  chèn khoảng cách
-         *
-         * @param top    top margin
-         * @param left   left margin
-         * @param bottom bottom margin
-         * @param right  right margin
+         * @param top   top margin
+         * @param left  left margin
+         * @param bottom    bottom margin
+         * @param right right margin
          */
         private void renderMarginRow(int top, int left, int bottom, int right) {
             JPanel pnlMargin = new JPanel();
@@ -190,10 +192,10 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                 public synchronized void drop(DropTargetDropEvent dtde) {
                     try {
                         dtde.acceptDrop(DnDConstants.ACTION_COPY);
-                        java.util.List<File> droppedFiles = (java.util.List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-                        if (droppedFiles.size() == 1) {
+                        List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        if(droppedFiles.size() == 1) {
                             File file = droppedFiles.get(0);
-                            if (!file.isDirectory()) {
+                            if(!file.isDirectory()) {
                                 txtFieldInput.setText(file.getAbsolutePath());
                             } else {
                                 showErrorDialog("Không thể thao tác với thư mục");
@@ -201,7 +203,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                         } else {
                             showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
                         }
-                    } catch (Exception e) {
+                    } catch (Exception e){
                         showErrorDialog("Lỗi trong quá trình tải file lên");
                     }
                 }
@@ -244,25 +246,34 @@ public class SymmetricCipherThirdPartyView extends JPanel {
             JLabel lblKeySize = new JLabel("Kích thước key", JLabel.CENTER);
             lblKeySize.setPreferredSize(new Dimension(150, 0));
             lblKeySize.setFont(FontUtils.createRobotoFont("regular", 20f));
-            cbbKeySize = new JComboBox(cipher.getSupportedKeySize().toArray(new Integer[0]));
-            cbbKeySize.setBackground(Color.WHITE);
-            cbbKeySize.setRenderer(new DefaultListCellRenderer() {
-                @Override
-                public void paint(Graphics g) {
-                    setFont(FontUtils.createRobotoFont("medium", 20f));
-                    setHorizontalAlignment(DefaultListCellRenderer.CENTER); // center item
-                    super.paint(g);
-                }
-            });
-            pnlKeySize.add(lblKeySize, BorderLayout.WEST);
-            pnlKeySize.add(cbbKeySize, BorderLayout.CENTER);
+            if(cipher.isFixedKeySize()) {   //  kiểm tra nếu cipher có kích thuớc khóa cố định
+                cbbKeySize = new JComboBox(cipher.getSupportedKeySize().toArray(new Integer[0]));
+                cbbKeySize.setBackground(Color.WHITE);
+                cbbKeySize.setRenderer(new DefaultListCellRenderer() {
+                    @Override
+                    public void paint(Graphics g) {
+                        setFont(FontUtils.createRobotoFont("medium", 20f));
+                        setHorizontalAlignment(DefaultListCellRenderer.CENTER); // center item
+                        super.paint(g);
+                    }
+                });
+                pnlKeySize.add(lblKeySize, BorderLayout.WEST);
+                pnlKeySize.add(cbbKeySize, BorderLayout.CENTER);
+            } else {
+                txtFieldKeySize = new JTextField();
+                txtFieldKeySize.setFont(FontUtils.createRobotoFont("medium", 20f));
+                txtFieldKeySize.setHorizontalAlignment(JTextField.CENTER);
+                txtFieldKeySize.setToolTipText("Key có kích thước nằm trong khoảng từ " + cipher.getSupportedKeySize().get(0) + " đến " + cipher.getSupportedKeySize().get(1));
+                pnlKeySize.add(lblKeySize, BorderLayout.WEST);
+                pnlKeySize.add(txtFieldKeySize, BorderLayout.CENTER);
+            }
             pnlSetting.add(pnlKeySize);
             // mode
             JPanel pnlMode = new JPanel(new BorderLayout());
             JLabel lblMode = new JLabel("Mode", JLabel.CENTER);
             lblMode.setPreferredSize(new Dimension(150, 0));
             lblMode.setFont(FontUtils.createRobotoFont("regular", 20f));
-            cbbMode = new JComboBox(SymmetricCipherThirdParty.MODES);
+            cbbMode = new JComboBox(cipher.getSupportedMode().toArray(new String[0]));
             cbbMode.setBackground(Color.WHITE);
             cbbMode.setRenderer(new DefaultListCellRenderer() {
                 @Override
@@ -272,6 +283,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     super.paint(g);
                 }
             });
+            if(cipher.getSupportedMode().getFirst().equals("")) cbbMode.setEnabled(false);
             cbbMode.setActionCommand("modeChange");
             cbbMode.addActionListener(this);
             pnlMode.add(lblMode, BorderLayout.WEST);
@@ -292,6 +304,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     super.paint(g);
                 }
             });
+            if(cipher.getSupportedPadding().getFirst().equals("")) cbbPadding.setEnabled(false);
             pnlPadding.add(lblPadding, BorderLayout.WEST);
             pnlPadding.add(cbbPadding, BorderLayout.CENTER);
             pnlSetting.add(pnlPadding);
@@ -310,7 +323,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
             pnlIv.add(btnGenIv, BorderLayout.EAST);
             btnGenIv.setActionCommand("genIv");
             btnGenIv.addActionListener(this);
-            if (cbbMode.getSelectedItem().toString().equals("ECB") || cipher.getSupportedIvOrNonceSize() == 0) {
+            if(cbbMode.getSelectedItem().toString().equals("ECB") || cipher.getSupportedIvOrNonceSize() == 0) {
                 txtFieldIv.setEnabled(false);
                 btnGenIv.setEnabled(false);
             }
@@ -480,18 +493,18 @@ public class SymmetricCipherThirdPartyView extends JPanel {
             String cmd = e.getActionCommand();
             switch (cmd) {
                 case "typeChange": {
-                    cardLayout.show(SymmetricCipherThirdPartyView.this, isTextPanel ? "file" : "text");
+                    cardLayout.show(SymmetricCipherView.this, isTextPanel ? "file" : "text");
                 }
                 case "modeChange": {
                     String mode = cbbMode.getSelectedItem().toString();
                     // xử lý khi chọn các mode không cần padding
-                    if (mode.equals("CTR") || mode.equals("CFB") || mode.equals("OFB")) {
+                    if(mode.equals("CTR") || mode.equals("CFB") || mode.equals("OFB")){
                         cbbPadding.setModel(noPaddingModel);
                     } else {
                         cbbPadding.setModel(defaultPaddingModel);
                     }
                     // xử lý khi chọn mode không cần IV hoặc Nonce
-                    if (mode.equals("ECB") || cipher.getSupportedIvOrNonceSize() == 0) {
+                    if(mode.equals("ECB") || cipher.getSupportedIvOrNonceSize() == 0) {
                         txtFieldIv.setText("");
                         txtFieldIv.setEnabled(false);
                         btnGenIv.setEnabled(false);
@@ -502,7 +515,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     break;
                 }
                 case "genIv": {
-                    txtFieldIv.setText(cipher.generateRandomIv());
+                    txtFieldIv.setText(cipher.generateRandomIv(cipher.getSupportedIvOrNonceSize()));
                     break;
                 }
                 case "copy": {  // sự kiện sao chép key
@@ -512,10 +525,10 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     clipboard.setContents(selection, null);
                     // kiểm tra nội dung trong clipboard
                     Transferable transferData = clipboard.getContents(null);
-                    if (transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                         try {
                             String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
-                            if (copiedText.equals(text)) {
+                            if(copiedText.equals(text)) {
                                 btnCopyKey.setBackground(Color.decode("#EDEBB9"));
                                 Timer timer = new Timer(1000, new ActionListener() {
                                     @Override
@@ -535,10 +548,29 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     break;
                 }
                 case "genKey": {
+                    String keySize = (cipher.isFixedKeySize() ? cbbKeySize.getSelectedItem().toString() : txtFieldKeySize.getText());
+                    if(!cipher.isFixedKeySize()) {   // kiểm tra thêm nếu giải thuật có kích thước khóa không cố định
+                        if(keySize.isBlank()) {
+                            showErrorDialog("Vui lòng nhập kích thước key");
+                            break;
+                        }
+                        int minKeySize = cipher.getSupportedKeySize().get(0);
+                        int maxKeySize = cipher.getSupportedKeySize().get(1);
+                        try {
+                            int key = Integer.parseInt(keySize);
+                            if(key < minKeySize || key > maxKeySize) {
+                                showErrorDialog("Vui lòng nhập kích thước key trong khoảng từ " + minKeySize + " đến " + maxKeySize);
+                                break;
+                            }
+                        } catch (Exception ex) {
+                            showErrorDialog("Vui lòng nhập kích thước key trong khoảng từ " + minKeySize + " đến " + maxKeySize);
+                            break;
+                        }
+                    }
                     // tạo secret key
                     try {
-                        KeyParameter key = cipher.genKey();
-                        txtAreaKey.setText(Base64.getEncoder().encodeToString(key.getKey()));
+                        SecretKey key = cipher.genKey((Integer.parseInt(keySize)));
+                        txtAreaKey.setText(Base64.getEncoder().encodeToString(key.getEncoded()));
                     } catch (Exception ex) {
                         showErrorDialog(ex.getMessage());
                     }
@@ -546,16 +578,16 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                 }
                 case "encrypt": {
                     String text = txtAreaInput.getText();
-                    if (text.isEmpty()) {
+                    if(text.isEmpty()) {
                         showErrorDialog("Vui lòng nhập nội dung cần mã hóa");
                         break;
                     }
                     // set key
                     try {
                         byte[] keyBytes = Base64.getDecoder().decode(txtAreaKey.getText());
-                        KeyParameter key = new KeyParameter(keyBytes);
+                        SecretKey key = new SecretKeySpec(keyBytes, cipher.getName());
                         cipher.loadKey(key);
-                    } catch (Exception ex) {
+                    } catch (Exception ex){
                         showErrorDialog("Key không hợp lệ");
                         break;
                     }
@@ -564,34 +596,34 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                         String mode = cbbMode.getSelectedItem().toString();
                         String padding = cbbPadding.getSelectedItem().toString();
                         cipher.setCipher(mode, padding);
-                        boolean useIv = false;
-                        if (txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
-                            if (!txtFieldIv.getText().isBlank()) {
-                                cipher.setIv(txtFieldIv.getText());
-                                useIv = true;
+                        if(txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
+                            if(!txtFieldIv.getText().isBlank()) {
+                                cipher.setIvParameterSpec(txtFieldIv.getText());
                             } else {
                                 showErrorDialog("Vui lòng nhập chuỗi IV");
                                 break;
                             }
+                        } else {    // nếu txtFieldIv không được bật thì không truyền IV
+                            cipher.setIvParameterSpec((IvParameterSpec) null);
                         }
-                        txtAreaOutput.setText(cipher.encryptBase64(text, useIv));
+                        txtAreaOutput.setText(cipher.encryptBase64(text));
                     } catch (Exception ex) {
                         showErrorDialog(ex.getMessage());
                     }
                     break;
                 }
-                case "decrypt": {
+                case "decrypt":{
                     String text = txtAreaInput.getText();
-                    if (text.isEmpty()) {
+                    if(text.isEmpty()) {
                         showErrorDialog("Vui lòng nhập nội dung cần giải mã");
                         break;
                     }
                     // set key
                     try {
                         byte[] keyBytes = Base64.getDecoder().decode(txtAreaKey.getText());
-                        KeyParameter key = new KeyParameter(keyBytes);
+                        SecretKey key = new SecretKeySpec(keyBytes, cipher.getName());
                         cipher.loadKey(key);
-                    } catch (Exception ex) {
+                    } catch (Exception ex){
                         showErrorDialog("Key không hợp lệ");
                         break;
                     }
@@ -600,24 +632,24 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                         String mode = cbbMode.getSelectedItem().toString();
                         String padding = cbbPadding.getSelectedItem().toString();
                         cipher.setCipher(mode, padding);
-                        boolean useIv = false;
-                        if (txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
-                            if (!txtFieldIv.getText().isBlank()) {
-                                cipher.setIv(txtFieldIv.getText());
-                                useIv = true;
+                        if(txtFieldIv.isEnabled()) {
+                            if(!txtFieldIv.getText().isBlank()) {
+                                cipher.setIvParameterSpec(txtFieldIv.getText());
                             } else {
                                 showErrorDialog("Vui lòng nhập chuỗi IV");
                                 break;
                             }
+                        } else {
+                            cipher.setIvParameterSpec((IvParameterSpec) null);
                         }
-                        txtAreaOutput.setText(cipher.decryptBase64(text, useIv));
+                        txtAreaOutput.setText(cipher.decryptBase64(text));
                     } catch (Exception ex) {
                         showErrorDialog(ex.getMessage());
                     }
                     break;
                 }
                 case "saveKey": {
-                    if (txtAreaKey.getText().isEmpty()) {
+                    if(txtAreaKey.getText().isEmpty()) {
                         showErrorDialog("Không thể lưu key rỗng");
                         break;
                     }
@@ -625,9 +657,9 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
                     fileChooser.setDialogTitle("Lưu key về máy tính");
                     int userOption = fileChooser.showSaveDialog(this.getParent());
-                    if (userOption == JFileChooser.APPROVE_OPTION) {
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
                         File saveFile = fileChooser.getSelectedFile();
-                        if (!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
                             saveFile = new File(saveFile.getAbsolutePath() + ".dat");
                         }
                         // ghi key vào file
@@ -653,9 +685,9 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
                     fileChooser.setDialogTitle("Tải key từ máy tính");
                     int userOption = fileChooser.showOpenDialog(this.getParent());
-                    if (userOption == JFileChooser.APPROVE_OPTION) {
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
                         File saveFile = fileChooser.getSelectedFile();
-                        if (!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
                             showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
                             break;
                         }
@@ -665,7 +697,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                             BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
                             txtAreaKey.setText("");
                             String line;
-                            while ((line = br.readLine()) != null) {
+                            while((line = br.readLine()) != null) {
                                 String[] data = line.split("\t");
                                 switch (data[0]) {
                                     case "KEY_SIZE": {
@@ -681,7 +713,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                                         break;
                                     }
                                     case "IV": {
-                                        if (data.length == 2) txtFieldIv.setText(data[1]);
+                                        if(data.length == 2) txtFieldIv.setText(data[1]);
                                         break;
                                     }
                                     case "KEY": {
@@ -703,8 +735,8 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                 case "chooseInput": {
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setDialogTitle("Chọn file thao tác");
-                    int userOption = fileChooser.showOpenDialog(SymmetricCipherThirdPartyView.this.getParent());
-                    if (userOption == JFileChooser.APPROVE_OPTION) {
+                    int userOption = fileChooser.showOpenDialog(SymmetricCipherView.this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
                         File inputFile = fileChooser.getSelectedFile();
                         txtFieldInput.setText(inputFile.getAbsolutePath());
                     }
@@ -713,8 +745,8 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                 case "chooseOutput": {
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setDialogTitle("Lưu file kết quả");
-                    int userOption = fileChooser.showSaveDialog(SymmetricCipherThirdPartyView.this.getParent());
-                    if (userOption == JFileChooser.APPROVE_OPTION) {
+                    int userOption = fileChooser.showSaveDialog(SymmetricCipherView.this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
                         File outputFile = fileChooser.getSelectedFile();
                         txtFieldOutput.setText(outputFile.getAbsolutePath());
                     }
@@ -726,21 +758,21 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     String dest = txtFieldOutput.getText();
                     // check path
                     File srcFile = new File(src);
-                    if (!srcFile.exists() || !srcFile.isFile()) {
+                    if(!srcFile.exists() || !srcFile.isFile()) {
                         showErrorDialog("File nguồn không hợp lệ");
                         break;
                     }
                     File destFile = new File(dest);
-                    if (!destFile.getParentFile().exists()) {
+                    if(!destFile.getParentFile().exists()) {
                         showErrorDialog("File đích không hợp lệ");
                         break;
                     }
                     // set key
                     try {
                         byte[] keyBytes = Base64.getDecoder().decode(txtAreaKey.getText());
-                        KeyParameter key = new KeyParameter(keyBytes);
+                        SecretKey key = new SecretKeySpec(keyBytes, cipher.getName());
                         cipher.loadKey(key);
-                    } catch (Exception ex) {
+                    } catch (Exception ex){
                         showErrorDialog("Key không hợp lệ");
                         break;
                     }
@@ -749,19 +781,19 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                         String mode = cbbMode.getSelectedItem().toString();
                         String padding = cbbPadding.getSelectedItem().toString();
                         cipher.setCipher(mode, padding);
-                        boolean useIv = false;
-                        if (txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
-                            if (!txtFieldIv.getText().isBlank()) {
-                                cipher.setIv(txtFieldIv.getText());
-                                useIv = true;
+                        if(txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
+                            if(!txtFieldIv.getText().isBlank()) {
+                                cipher.setIvParameterSpec(txtFieldIv.getText());
                             } else {
                                 showErrorDialog("Vui lòng nhập chuỗi IV");
                                 break;
                             }
+                        } else {    // nếu txtFieldIv không được bật thì không truyền IV
+                            cipher.setIvParameterSpec((IvParameterSpec) null);
                         }
                         // encrypt
-                        boolean isEncrypted = cipher.encryptFile(src, dest, useIv);
-                        if (isEncrypted) {
+                        boolean isEncrypted = cipher.encryptFile(src, dest);
+                        if(isEncrypted) {
                             lblStatus.setText("Kết quả: Thao tác thành công");
                             lblResultPath.setText(txtFieldOutput.getText());
                             btnOpenFileLocation.setVisible(true);
@@ -780,21 +812,21 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                     String dest = txtFieldOutput.getText();
                     // check path
                     File srcFile = new File(src);
-                    if (!srcFile.exists() || !srcFile.isFile()) {
+                    if(!srcFile.exists() || !srcFile.isFile()) {
                         showErrorDialog("File nguồn không hợp lệ");
                         break;
                     }
                     File destFile = new File(dest);
-                    if (!destFile.getParentFile().exists()) {
+                    if(!destFile.getParentFile().exists()) {
                         showErrorDialog("File đích không hợp lệ");
                         break;
                     }
                     // set key
                     try {
                         byte[] keyBytes = Base64.getDecoder().decode(txtAreaKey.getText());
-                        KeyParameter key = new KeyParameter(keyBytes);
+                        SecretKey key = new SecretKeySpec(keyBytes, cipher.getName());
                         cipher.loadKey(key);
-                    } catch (Exception ex) {
+                    } catch (Exception ex){
                         showErrorDialog("Key không hợp lệ");
                         break;
                     }
@@ -803,19 +835,19 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                         String mode = cbbMode.getSelectedItem().toString();
                         String padding = cbbPadding.getSelectedItem().toString();
                         cipher.setCipher(mode, padding);
-                        boolean useIv = false;
-                        if (txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
-                            if (!txtFieldIv.getText().isBlank()) {
-                                cipher.setIv(txtFieldIv.getText());
-                                useIv = true;
+                        if(txtFieldIv.isEnabled()) {    // nếu txtFieldIv được bật thì yêu cầu truyền IV
+                            if(!txtFieldIv.getText().isBlank()) {
+                                cipher.setIvParameterSpec(txtFieldIv.getText());
                             } else {
                                 showErrorDialog("Vui lòng nhập chuỗi IV");
                                 break;
                             }
+                        } else {    // nếu txtFieldIv không được bật thì không truyền IV
+                            cipher.setIvParameterSpec((IvParameterSpec) null);
                         }
                         // decrypt
-                        boolean isDecrypted = cipher.decryptFile(src, dest, useIv);
-                        if (isDecrypted) {
+                        boolean isDecrypted = cipher.decryptFile(src, dest);
+                        if(isDecrypted) {
                             lblStatus.setText("Kết quả: Thao tác thành công");
                             lblResultPath.setText(txtFieldOutput.getText());
                             btnOpenFileLocation.setVisible(true);
@@ -831,7 +863,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
                 case "openFileLocation": {
                     File resultFile = new File(lblResultPath.getText());
                     File container = resultFile.getParentFile();
-                    if (Desktop.isDesktopSupported()) {
+                    if(Desktop.isDesktopSupported()) {
                         Desktop desktop = Desktop.getDesktop();
                         try {
                             desktop.open(container);
@@ -847,7 +879,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
 
         /**
          * showErrorDialog	hiển thị cửa sổ thông báo lỗi
-         * @param message thông báo
+         * @param message	thông báo
          */
         public void showErrorDialog(String message) {
             JOptionPane.showMessageDialog(this.getParent(), message, "Lỗi thực thi", JOptionPane.ERROR_MESSAGE);

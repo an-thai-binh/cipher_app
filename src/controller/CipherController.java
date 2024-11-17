@@ -50,7 +50,7 @@ public class CipherController implements ICipherController {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String cmd = e.getActionCommand();
-			if(isContains(CipherSupport.CLASSICAL_CIPHERS, cmd)) {
+			if(isContains(CipherSupport.CLASSICAL_CIPHERS, cmd)) {	// cổ điển
 				try {
 					IClassicalCipher cipher = model.createClassicalCipher(cmd, LanguageSupport.EN, 2);
 					if(cipher != null) {
@@ -61,14 +61,14 @@ public class CipherController implements ICipherController {
 				} catch (Exception ex) {
 					view.showErrorDialog("Cấu hình cho phương pháp không hợp lệ");
 				}
-			} else if(isContains(CipherSupport.SYMMETRIC_CIPHERS, cmd)) {
+			} else if(isContains(CipherSupport.SYMMETRIC_CIPHERS, cmd)) {	// đối xứng hiện đại
 				SymmetricCipher cipher = model.createSymmetricCipher(cmd);
 				if (cipher != null) {
 					view.createSymmetricCipherView(cipher);
 				} else {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}
-			} else if(isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY, cmd)) {
+			} else if(isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY, cmd)) {	// đối xứng hiện đại thư viện thứ 3
                 SymmetricCipherThirdParty cipher = null;
                 try {
                     cipher = model.createSymmetricCipherThirdParty(cmd);
@@ -80,7 +80,7 @@ public class CipherController implements ICipherController {
 				} else {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}
-			} else if(isContains(CipherSupport.ASYMMETRIC_CIPHERS, cmd)) {
+			} else if(isContains(CipherSupport.ASYMMETRIC_CIPHERS, cmd)) {	// bất đối xứng
 				AsymmetricCipher cipher = model.createAsymmetric(cmd);
 				if(cipher != null) {
 					view.createAsymmetricCipherView(cipher);
