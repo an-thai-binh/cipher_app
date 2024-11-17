@@ -3,16 +3,24 @@ package view.hash;
 import model.hash.IHashAlgorithm;
 import utils.CipherSupport;
 import utils.FontUtils;
+import utils.IconUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
 public class HashAlgorithmView extends JPanel {
     private final IHashAlgorithm algorithm;
     private CardLayout cardLayout;
+    private JTextField txtFieldInput;
     public HashAlgorithmView(IHashAlgorithm algorithm) {
         this.algorithm = algorithm;
         init();
@@ -69,6 +77,13 @@ public class HashAlgorithmView extends JPanel {
             renderSelf();
             renderTitleRow();
             renderTypeRow();
+            if(algorithm.getName().equals("SHA")) {
+                renderModeRow();
+            }
+            renderChooseInputFileRow();
+            renderInputFileRow();
+            renderActionRow();
+            renderOutputRow();
         }
 
         /**
@@ -155,6 +170,68 @@ public class HashAlgorithmView extends JPanel {
         }
 
         /**
+         * renderChooseInputFileRow   cài đặt giao diện dòng chọn input file
+         */
+        private void renderChooseInputFileRow() {
+            JPanel pnlInputFile = new JPanel(new GridLayout(1, 1));
+            pnlInputFile.setBackground(null);
+            pnlInputFile.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            // button input file
+            JButton btnInputFile = new JButton("CHỌN FILE CẦN MÃ HÓA/GIẢI MÃ");
+            btnInputFile.setVerticalTextPosition(SwingConstants.TOP);
+            btnInputFile.setHorizontalTextPosition(SwingConstants.CENTER);
+            btnInputFile.setBackground(Color.WHITE);
+            btnInputFile.setFont(FontUtils.createRobotoFont("medium", 20f));
+            btnInputFile.setIcon(IconUtils.UPLOAD_ICON);
+            btnInputFile.setActionCommand("chooseInput");
+            btnInputFile.addActionListener(this);
+            btnInputFile.setDropTarget(new DropTarget() {
+                @Override
+                public synchronized void drop(DropTargetDropEvent dtde) {
+                    try {
+                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        if(droppedFiles.size() == 1) {
+                            File file = droppedFiles.get(0);
+                            if(!file.isDirectory()) {
+                                txtFieldInput.setText(file.getAbsolutePath());
+                            } else {
+                                showErrorDialog("Không thể thao tác với thư mục");
+                            }
+                        } else {
+                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
+                        }
+                    } catch (Exception e){
+                        showErrorDialog("Lỗi trong quá trình tải file lên");
+                    }
+                }
+            });
+            pnlInputFile.add(btnInputFile, BorderLayout.CENTER);
+            this.add(pnlInputFile);
+        }
+
+        /**
+         * renderInputFileRow   cài đặt giao diện dòng thông tin input file
+         */
+        private void renderInputFileRow() {
+            JPanel pnlChooseInput = new JPanel(new GridLayout(1, 1));
+            pnlChooseInput.setBackground(null);
+            pnlChooseInput.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            JPanel pnlInputPath = new JPanel();
+            pnlInputPath.setLayout(new BoxLayout(pnlInputPath, BoxLayout.X_AXIS));
+            pnlInputPath.setBackground(null);
+            JLabel lblInputPath = new JLabel("Đường dẫn file nguồn:");
+            lblInputPath.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblInputPath.setFont(FontUtils.createRobotoFont("medium", 16f));
+            txtFieldInput = new JTextField();
+            txtFieldInput.setFont(FontUtils.createRobotoFont("regular", 16f));
+            pnlInputPath.add(lblInputPath);
+            pnlInputPath.add(txtFieldInput);
+            pnlChooseInput.add(pnlInputPath);
+            this.add(pnlChooseInput);
+        }
+
+        /**
          * renderActionRow  cài đặt giao diện dòng action
          */
         private void renderActionRow() {
@@ -162,7 +239,7 @@ public class HashAlgorithmView extends JPanel {
             pnlAction.setBackground(null);
             pnlAction.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
             JButton btnHash = new JButton("Hash");
-            btnHash.setActionCommand("hash");
+            btnHash.setActionCommand(isTextPanel ? "hash" : "hashFile");
             btnHash.addActionListener(this);
             btnHash.setPreferredSize(new Dimension(200, 50));
             btnHash.setBackground(Color.decode("#F3C623"));
@@ -212,14 +289,36 @@ public class HashAlgorithmView extends JPanel {
                         } else {
                             algorithm.setInstance(algorithm.getName());
                         }
+                        txtAreaOutput.setText(algorithm.hash(text));
                     } catch (Exception ex) {
                         showErrorDialog(ex.getMessage());
-                        break;
                     }
-                    txtAreaOutput.setText(algorithm.hash(text));
+                    break;
+                }
+                case "chooseInput": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Chọn file thao tác");
+                    int userOption = fileChooser.showOpenDialog(HashAlgorithmView.this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File inputFile = fileChooser.getSelectedFile();
+                        txtFieldInput.setText(inputFile.getAbsolutePath());
+                    }
                     break;
                 }
                 case "hashFile": {
+                    String src = txtFieldInput.getText();
+                    // set instance
+                    try {
+                        String name = algorithm.getName();
+                        if(name.equals("SHA")) {    // nếu là SHA thì lấy instance từ cbbMode
+                            algorithm.setInstance(cbbMode.getSelectedItem().toString());
+                        } else {
+                            algorithm.setInstance(algorithm.getName());
+                        }
+                        txtAreaOutput.setText(algorithm.hashFile(src));
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
                     break;
                 }
             }
