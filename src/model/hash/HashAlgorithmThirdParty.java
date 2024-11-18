@@ -94,11 +94,4 @@ public class HashAlgorithmThirdParty implements IHashAlgorithm {
         BigInteger bigInt = new BigInteger(1, result);
         return bigInt.toString(16);
     }
-
-    public static void main(String[] args) throws Exception {
-        HashAlgorithmThirdParty hashAlgorithm = new HashAlgorithmThirdParty("Whirlpool");
-        String text = "Xin chào cả nhà của kem";
-        hashAlgorithm.setInstance(hashAlgorithm.getName());
-        System.out.println(hashAlgorithm.hash(text));
-    }
 }

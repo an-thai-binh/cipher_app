@@ -333,20 +333,20 @@ public class SymmetricCipherThirdParty {
         return true;
     }
 
-    public static void main(String[] args) throws Exception {
-        SymmetricCipherThirdParty cipher = new SymmetricCipherThirdParty("Serpent");
-        KeyParameter key = cipher.genKey();
-        String iv = "0000000000000000";
-        cipher.loadKey(key);
-        cipher.setIv(iv);
-        cipher.setCipher("CBC", "PKCS7Padding");
-//        String encrypted = cipher.encryptBase64("tôi là An Thái Bình", true);
-//        System.out.println(encrypted);
-//        System.out.println(cipher.decryptBase64(encrypted, true));
-        String src = "D:/Documents/TEMQA.pptx";
-        String desc = "D:/Documents/temqa-encrypt.pptx";
-        String desc2 = "D:/Documents/temqa-decrypt.pptx";
-        cipher.encryptFile(src, desc, true);
-        cipher.decryptFile(desc, desc2, true);
-    }
+//    public static void main(String[] args) throws Exception {
+//        SymmetricCipherThirdParty cipher = new SymmetricCipherThirdParty("Serpent");
+//        KeyParameter key = cipher.genKey();
+//        String iv = "0000000000000000";
+//        cipher.loadKey(key);
+//        cipher.setIv(iv);
+//        cipher.setCipher("CBC", "PKCS7Padding");
+////        String encrypted = cipher.encryptBase64("tôi là An Thái Bình", true);
+////        System.out.println(encrypted);
+////        System.out.println(cipher.decryptBase64(encrypted, true));
+//        String src = "D:/Documents/TEMQA.pptx";
+//        String desc = "D:/Documents/temqa-encrypt.pptx";
+//        String desc2 = "D:/Documents/temqa-decrypt.pptx";
+//        cipher.encryptFile(src, desc, true);
+//        cipher.decryptFile(desc, desc2, true);
+//    }
  }

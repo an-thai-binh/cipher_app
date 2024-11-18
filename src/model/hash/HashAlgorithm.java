@@ -77,13 +77,4 @@ public class HashAlgorithm implements IHashAlgorithm {
         BigInteger bigInt = new BigInteger(1, digest);
         return bigInt.toString(16);
     }
-
-    public static void main(String[] args) throws Exception {
-        HashAlgorithm hashAlgorithm = new HashAlgorithm("MD5");
-        hashAlgorithm.setInstance(hashAlgorithm.getName());
-        String text = "Xin chào cả nhà của kem";
-        System.out.println(hashAlgorithm.hash(text));
-        String source = "D:\\Downloads\\visualvm_217.zip";
-        System.out.println(hashAlgorithm.hashFile(source));
-    }
 }

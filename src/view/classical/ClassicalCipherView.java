@@ -451,7 +451,6 @@ public class ClassicalCipherView extends JPanel implements ActionListener {
                     String encryptedText = cipher.encrypt(text);
                     txtAreaOutput.setText(encryptedText);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
                     showErrorDialog(ex.getMessage());
                 }
                 break;
