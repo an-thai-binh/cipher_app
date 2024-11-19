@@ -245,7 +245,6 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         outputEncryptScrollPane.setPreferredSize(new Dimension(0, 200));
         outputEncryptScrollPane.setBackground(null);
         pnlEncrypt.add(outputEncryptScrollPane);
-        
         panel.add(pnlEncrypt);
     }
 

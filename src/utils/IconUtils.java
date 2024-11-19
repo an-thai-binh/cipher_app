@@ -15,4 +15,5 @@ public class IconUtils {
     public static final ImageIcon KEY_ICON = new ImageIcon(IconUtils.class.getResource("/img/key_icon.png"));
     public static final ImageIcon GENERATE_ICON = new ImageIcon(IconUtils.class.getResource("/img/generate_icon.png"));
     public static final ImageIcon UPLOAD_ICON = new ImageIcon(IconUtils.class.getResource("/img/upload_icon.png"));
+    public static final ImageIcon SIGN_ICON = new ImageIcon(IconUtils.class.getResource("/img/sign_icon.png"));
 }
