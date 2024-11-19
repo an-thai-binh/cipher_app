@@ -3,6 +3,7 @@ package view;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
+import model.signature.DigitalSignature;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 
@@ -49,6 +50,12 @@ public interface ICipherView {
 	 * @param algorithm	đối tượng thực hiện
 	 */
 	public void createHashAlgorithmView(IHashAlgorithm algorithm);
+
+	/**
+	 * createDigitalSignatureView	khởi tạo giao diện chữ ký điện tử
+	 * @param ds	đối tượng thực hiện
+	 */
+	public void createDigitalSignatureView(DigitalSignature ds);
 
 	/**
 	 * showErrorDialog	hiển thị cửa sổ thông báo lỗi

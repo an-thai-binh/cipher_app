@@ -26,7 +26,7 @@ public class MenuView extends JPanel {
         renderSymmetricRow();
         renderAsymmetricRow();
         renderHashRow();
-        renderSymmetricRow();
+        renderDigitalSignatureRow();
     }
 
     /**
@@ -149,6 +149,9 @@ public class MenuView extends JPanel {
         this.add(pnlRow3);
     }
 
+    /**
+     * renderHashRow   cài đặt giao diện giải thuật hash
+     */
     private void renderHashRow() {
         JPanel pnlRow4 = new JPanel(new BorderLayout());
         pnlRow4.setPreferredSize(new Dimension(0, 70));
@@ -166,19 +169,49 @@ public class MenuView extends JPanel {
         JPanel pnlRow4Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
         pnlRow4Btn.setBackground(Color.decode("#F4F6FF"));
         pnlRow4Btn.setBorder(BorderFactory.createEmptyBorder(0, 100, 0, 100));
-        JButton btnAsymmetric;
+        JButton btnHash;
         ArrayList<String> hashAlgorithmList = new ArrayList<>();
         hashAlgorithmList.addAll(Arrays.asList(CipherSupport.HASH_ALGORITHMS));
         hashAlgorithmList.addAll(Arrays.asList(CipherSupport.HASH_ALGORITHMS_THIRD_PARTY));
         for(String c: hashAlgorithmList) {
-            btnAsymmetric = new JButton(c);
-            btnAsymmetric.setBackground(Color.WHITE);
-            btnAsymmetric.setFont(FontUtils.createRobotoFont("regular", 20f));
-            btnAsymmetric.setPreferredSize(new Dimension(140, 30));
-            btnAsymmetric.addActionListener(this.listener);
-            pnlRow4Btn.add(btnAsymmetric);
+            btnHash = new JButton(c);
+            btnHash.setBackground(Color.WHITE);
+            btnHash.setFont(FontUtils.createRobotoFont("regular", 20f));
+            btnHash.setPreferredSize(new Dimension(140, 30));
+            btnHash.addActionListener(this.listener);
+            pnlRow4Btn.add(btnHash);
         }
         pnlRow4.add(pnlRow4Btn, BorderLayout.CENTER);
         this.add(pnlRow4);
+    }
+
+    /**
+     * renderDigitalSignatureRow    cài đặt giao diện chữ ký điện tử
+     */
+    private void renderDigitalSignatureRow() {
+        JPanel pnlRow5 = new JPanel(new BorderLayout());
+        pnlRow5.setPreferredSize(new Dimension(0, 70));
+        pnlRow5.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlRow5.setBackground(Color.WHITE);
+        // JLabel
+        JLabel lblRow5Type = new JLabel("CHỮ KÝ ĐIỆN TỬ", JLabel.CENTER);
+        lblRow5Type.setFont(FontUtils.createRobotoFont("medium", 24f));
+        lblRow5Type.setForeground(Color.WHITE);
+        lblRow5Type.setBackground(Color.decode("#10375C"));
+        lblRow5Type.setOpaque(true);
+        lblRow5Type.setPreferredSize(new Dimension(400, 0));
+        pnlRow5.add(lblRow5Type, BorderLayout.WEST);
+        // các JButton
+        JPanel pnlRow5Btn = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
+        pnlRow5Btn.setBackground(Color.decode("#F4F6FF"));
+        JButton btnDigitalSignature = new JButton("Chữ ký điện tử");
+        btnDigitalSignature.setActionCommand("DigitalSignature");
+        btnDigitalSignature.setBackground(Color.WHITE);
+        btnDigitalSignature.setFont(FontUtils.createRobotoFont("regular", 20f));
+        btnDigitalSignature.setPreferredSize(new Dimension(200, 30));
+        btnDigitalSignature.addActionListener(this.listener);
+        pnlRow5Btn.add(btnDigitalSignature);
+        pnlRow5.add(pnlRow5Btn, BorderLayout.CENTER);
+        this.add(pnlRow5);
     }
 }

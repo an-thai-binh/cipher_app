@@ -3,6 +3,7 @@ package model;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
+import model.signature.DigitalSignature;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 
@@ -39,9 +40,15 @@ public interface ICipherModel {
     public AsymmetricCipher createAsymmetric(String cipher);
 
 	/**
-	 * createHashAlgorithm	khởi tạo giải thuật hash
+	 * createHashAlgorithm	khởi tạo đối tượng giải thuật hash
 	 * @param algorithm	giải thuật
 	 * @return IHashAlgorithm
 	 */
 	public IHashAlgorithm createHashAlgorithm(String algorithm);
+
+	/**
+	 * createDigitalSignature	khởi tạo đối tượng chữ ký điện tử
+	 * @return DigitalSignature
+	 */
+	public DigitalSignature createDigitalSignature();
 }

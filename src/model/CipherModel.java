@@ -3,6 +3,7 @@ package model;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
+import model.signature.DigitalSignature;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 
@@ -63,5 +64,14 @@ public class CipherModel implements ICipherModel {
 	@Override
 	public IHashAlgorithm createHashAlgorithm(String algorithm) {
 		return cipherFactory.createHashAlgorithm(algorithm);
+	}
+
+	/**
+	 * createDigitalSignature	khởi tạo đối tượng chữ ký điện tử
+	 * @return DigitalSignature
+	 */
+	@Override
+	public DigitalSignature createDigitalSignature() {
+		return new DigitalSignature();
 	}
 }

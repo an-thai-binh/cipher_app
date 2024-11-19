@@ -4,6 +4,7 @@ import model.ICipherModel;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
+import model.signature.DigitalSignature;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 import utils.CipherSupport;
@@ -75,6 +76,13 @@ public class CipherController implements ICipherController {
 				IHashAlgorithm algorithm = model.createHashAlgorithm(cmd);
 				if(algorithm != null) {
 					view.createHashAlgorithmView(algorithm);
+				} else {
+					view.showErrorDialog("Không khởi tạo được thuật toán");
+				}
+			}  else if(cmd.equals("DigitalSignature")) {
+				DigitalSignature ds = model.createDigitalSignature();
+				if(ds != null) {
+					view.createDigitalSignatureView(ds);
 				} else {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}

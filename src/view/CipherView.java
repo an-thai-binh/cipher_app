@@ -3,12 +3,14 @@ package view;
 import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
+import model.signature.DigitalSignature;
 import model.symmetric.SymmetricCipher;
 import model.symmetric.SymmetricCipherThirdParty;
 import utils.IconUtils;
 import view.asymmetric.AsymmetricCipherView;
 import view.classical.ClassicalCipherView;
 import view.hash.HashAlgorithmView;
+import view.signature.DigitalSignatureView;
 import view.symmetric.SymmetricCipherThirdPartyView;
 import view.symmetric.SymmetricCipherView;
 
@@ -132,6 +134,22 @@ public class CipherView extends JFrame implements ICipherView {
 		cipherView.setLocationRelativeTo(null);
 		cipherView.setContentPane(new HashAlgorithmView(algorithm));
 		cipherView.setTitle("Giải thuật " + algorithm.getName());
+		cipherView.setVisible(true);
+	}
+
+	/**
+	 * createDigitalSignatureView	khởi tạo giao diện chữ ký điện tử
+	 * @param ds	đối tượng thực hiện
+	 */
+	@Override
+	public void createDigitalSignatureView(DigitalSignature ds) {
+		JFrame cipherView = new JFrame();
+		cipherView.setIconImage(IconUtils.LOGO_CIPHER.getImage());
+		cipherView.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		cipherView.setSize(1216, 834);
+		cipherView.setLocationRelativeTo(null);
+		cipherView.setContentPane(new DigitalSignatureView(ds));
+		cipherView.setTitle("Chữ ký điện tử");
 		cipherView.setVisible(true);
 	}
 
