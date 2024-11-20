@@ -7,13 +7,20 @@ import utils.IconUtils;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.dnd.DnDConstants;
+import java.awt.dnd.DropTarget;
+import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 
 public class DigitalSignatureView extends JPanel implements ActionListener {
     private final DigitalSignature ds;
     private JComboBox cbbKeySize, cbbCipherName, cbbHashName;
     private JTextArea txtAreaPublicKey, txtAreaPrivateKey;
+    private JTextField txtFieldInputSign, txtFieldInputVerify;
     private JButton btnCopyPublicKey, btnCopyPrivateKey;
     public DigitalSignatureView(DigitalSignature ds) {
         this.ds = ds;
@@ -219,6 +226,9 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             if(isTextPanel) {
                 renderSignSide();
                 renderVerifySide();
+            } else {
+                renderSignFileSide();
+                renderVerifyFileSide();
             }
         }
 
@@ -303,6 +313,120 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             this.add(pnlSign);
         }
 
+        private void renderSignFileSide() {
+            JPanel pnlSign = new JPanel();
+            pnlSign.setBackground(null);
+            pnlSign.setLayout(new BoxLayout(pnlSign, BoxLayout.Y_AXIS));
+            pnlSign.setBorder(BorderFactory.createEmptyBorder(0, 10, 20, 10));
+            // title
+            JLabel lblSignTitle = new JLabel("Ký dữ liệu", JLabel.CENTER);
+            lblSignTitle.setFont(FontUtils.createRobotoFont("medium", 16));
+            lblSignTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblSignTitle.setBorder(BorderFactory.createEmptyBorder(5,0, 5, 0));
+            pnlSign.add(lblSignTitle);
+            // input
+            JPanel pnlInputFile = new JPanel(new BorderLayout());
+            pnlInputFile.setBackground(null);
+            pnlInputFile.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            // button input file
+            JButton btnInputFile = new JButton("CHỌN FILE CẦN KÝ");
+            btnInputFile.setVerticalTextPosition(SwingConstants.TOP);
+            btnInputFile.setHorizontalTextPosition(SwingConstants.CENTER);
+            btnInputFile.setBackground(Color.WHITE);
+            btnInputFile.setFont(FontUtils.createRobotoFont("medium", 20f));
+            btnInputFile.setIcon(IconUtils.UPLOAD_ICON);
+            btnInputFile.setActionCommand("chooseInput");
+            btnInputFile.addActionListener(this);
+//            btnInputFile.setDropTarget(new DropTarget() {
+//                @Override
+//                public synchronized void drop(DropTargetDropEvent dtde) {
+//                    try {
+//                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
+//                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+//                        if(droppedFiles.size() == 1) {
+//                            File file = droppedFiles.get(0);
+//                            if(!file.isDirectory()) {
+//                                txtFieldInput.setText(file.getAbsolutePath());
+//                            } else {
+//                                showErrorDialog("Không thể thao tác với thư mục");
+//                            }
+//                        } else {
+//                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
+//                        }
+//                    } catch (Exception e){
+//                        showErrorDialog("Lỗi trong quá trình tải file lên");
+//                    }
+//                }
+//            });
+            pnlInputFile.add(btnInputFile, BorderLayout.CENTER);
+            JPanel pnlChooseInput = new JPanel(new GridLayout(1, 1));
+            pnlChooseInput.setBackground(null);
+            pnlChooseInput.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            JPanel pnlInputPath = new JPanel();
+            pnlInputPath.setLayout(new BoxLayout(pnlInputPath, BoxLayout.X_AXIS));
+            pnlInputPath.setBackground(null);
+            JLabel lblInputPath = new JLabel("Đường dẫn file nguồn:");
+            lblInputPath.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblInputPath.setFont(FontUtils.createRobotoFont("medium", 16f));
+            txtFieldInputSign = new JTextField();
+            txtFieldInputSign.setFont(FontUtils.createRobotoFont("regular", 16f));
+            pnlInputPath.add(lblInputPath);
+            pnlInputPath.add(txtFieldInputSign);
+            pnlChooseInput.add(pnlInputPath);
+            pnlInputFile.add(pnlChooseInput, BorderLayout.SOUTH);
+            pnlSign.add(pnlInputFile);
+            // key label
+            JLabel lblPrivateKey = new JLabel("Nhập private key:", JLabel.CENTER);
+            lblPrivateKey.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblPrivateKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+            lblPrivateKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pnlSign.add(lblPrivateKey);
+            // key
+            renderSignKeyRow(pnlSign);
+            // action button
+            JPanel pnlSignAction = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            pnlSignAction.setBackground(null);
+            JButton btnSign = new JButton("Ký");
+            btnSign.setActionCommand("sign");
+            btnSign.addActionListener(this);
+            btnSign.setPreferredSize(new Dimension(175, 40));
+            btnSign.setBackground(Color.decode("#F3C623"));
+            btnSign.setFont(FontUtils.createRobotoFont("medium", 24f));
+            pnlSignAction.add(btnSign);
+            pnlSign.add(pnlSignAction);
+            // output
+            JPanel pnlOutput = new JPanel(new BorderLayout());
+            pnlOutput.setBackground(null);
+            txtAreaOutputSign = new JTextArea();   // text area
+            txtAreaOutputSign.setEditable(false);
+            txtAreaOutputSign.setLineWrap(true);
+            txtAreaOutputSign.setWrapStyleWord(true);
+            txtAreaOutputSign.setFont(FontUtils.createRobotoFont("regular", 16f));
+            txtAreaOutputSign.setForeground(Color.black);
+            TitledBorder borderOutput = BorderFactory.createTitledBorder("Chữ ký số");
+            borderOutput.setTitleFont(FontUtils.createRobotoFont("regular", 13f));
+            txtAreaOutputSign.setBorder(borderOutput);
+            JScrollPane outputSignScrollPane = new JScrollPane(txtAreaOutputSign);
+            outputSignScrollPane.setPreferredSize(new Dimension(0, 140));
+            outputSignScrollPane.setBackground(null);
+            pnlOutput.add(outputSignScrollPane, BorderLayout.CENTER);
+            JPanel pnlOutputTool = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            pnlOutputTool.setBackground(null);
+            btnCopySign = new JButton("Sao chép");
+            btnCopySign.setActionCommand("copySign");
+            btnCopySign.addActionListener(this);
+            btnCopySign.setFont(FontUtils.createRobotoFont("medium", 16f));
+            JButton btnSaveSign = new JButton("Lưu");
+            btnSaveSign.setActionCommand("saveSign");
+            btnSaveSign.addActionListener(this);
+            btnSaveSign.setFont(FontUtils.createRobotoFont("medium", 16f));
+            pnlOutputTool.add(btnCopySign);
+            pnlOutputTool.add(btnSaveSign);
+            pnlOutput.add(pnlOutputTool, BorderLayout.SOUTH);
+            pnlSign.add(pnlOutput);
+            this.add(pnlSign);
+        }
+
         private void renderVerifySide() {
             JPanel pnlVerify = new JPanel();
             pnlVerify.setBackground(null);
@@ -327,26 +451,35 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             inputVerifyScrollPane.setPreferredSize(new Dimension(0, 200));
             inputVerifyScrollPane.setBackground(null);
             pnlVerify.add(inputVerifyScrollPane);
-            // sign label
+            // sign and key input panel
+            JPanel pnlSignKey = new JPanel(new GridLayout(2, 1));
+            pnlSignKey.setBackground(null);
+            // sign panel
+            JPanel pnlSignValue = new JPanel(new BorderLayout());
+            pnlSignValue.setBackground(null);
             JLabel lblSignValue = new JLabel("Nhập chữ ký:", JLabel.CENTER);
             lblSignValue.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
             lblSignValue.setFont(FontUtils.createRobotoFont("medium", 16f));
             lblSignValue.setAlignmentX(Component.CENTER_ALIGNMENT);
-            pnlVerify.add(lblSignValue);
-            // sign
-            renderSignValueRow(pnlVerify);
-            // key label
+            pnlSignValue.add(lblSignValue, BorderLayout.NORTH);
+            renderSignValueRow(pnlSignValue);
+            pnlSignKey.add(pnlSignValue);
+            // key panel
+            JPanel pnlKeyValue = new JPanel(new BorderLayout());
+            pnlKeyValue.setBackground(null);
             JLabel lblPublicKey = new JLabel("Nhập public key:", JLabel.CENTER);
             lblPublicKey.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
             lblPublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
             lblPublicKey.setAlignmentX(Component.CENTER_ALIGNMENT);
-            pnlVerify.add(lblPublicKey);
-            // key
-            renderVerifyKeyRow(pnlVerify);
+            pnlKeyValue.add(lblPublicKey, BorderLayout.NORTH);
+            renderVerifyKeyRow(pnlKeyValue);
+            pnlSignKey.add(pnlKeyValue);
+            // add sign and key input panel
+            pnlVerify.add(pnlSignKey);
             // action button
             JPanel pnlVerifyAction = new JPanel(new FlowLayout(FlowLayout.CENTER));
             pnlVerifyAction.setBackground(null);
-            pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+            pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             JButton btnVerify = new JButton("Xác minh");
             btnVerify.setActionCommand("sign");
             btnVerify.addActionListener(this);
@@ -357,6 +490,117 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             pnlVerify.add(pnlVerifyAction);
             // output
             JPanel pnlOutput = new JPanel(new GridLayout(1, 1));
+            pnlOutput.setPreferredSize(new Dimension(0, 145));
+            JButton btnOutput = new JButton();
+            btnOutput.setEnabled(false);
+            btnOutput.setPreferredSize(new Dimension(0, 60));
+            pnlOutput.add(btnOutput);
+            pnlVerify.add(pnlOutput);
+            this.add(pnlVerify);
+        }
+
+        private void renderVerifyFileSide() {
+            JPanel pnlVerify = new JPanel();
+            pnlVerify.setBackground(null);
+            pnlVerify.setLayout(new BoxLayout(pnlVerify, BoxLayout.Y_AXIS));
+            pnlVerify.setBorder(BorderFactory.createEmptyBorder(0, 10, 20, 10));
+            // title
+            JLabel lblVerifyTitle = new JLabel("Xác minh", JLabel.CENTER);
+            lblVerifyTitle.setFont(FontUtils.createRobotoFont("medium", 16));
+            lblVerifyTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+            lblVerifyTitle.setBorder(BorderFactory.createEmptyBorder(5,0, 5, 0));
+            pnlVerify.add(lblVerifyTitle);
+            // input
+            JPanel pnlInputFile = new JPanel(new BorderLayout());
+            pnlInputFile.setBackground(null);
+            pnlInputFile.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            // button input file
+            JButton btnInputFile = new JButton("CHỌN FILE CẦN XÁC MINH");
+            btnInputFile.setVerticalTextPosition(SwingConstants.TOP);
+            btnInputFile.setHorizontalTextPosition(SwingConstants.CENTER);
+            btnInputFile.setBackground(Color.WHITE);
+            btnInputFile.setFont(FontUtils.createRobotoFont("medium", 20f));
+            btnInputFile.setIcon(IconUtils.UPLOAD_ICON);
+            btnInputFile.setActionCommand("chooseInput");
+            btnInputFile.addActionListener(this);
+//            btnInputFile.setDropTarget(new DropTarget() {
+//                @Override
+//                public synchronized void drop(DropTargetDropEvent dtde) {
+//                    try {
+//                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
+//                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+//                        if(droppedFiles.size() == 1) {
+//                            File file = droppedFiles.get(0);
+//                            if(!file.isDirectory()) {
+//                                txtFieldInput.setText(file.getAbsolutePath());
+//                            } else {
+//                                showErrorDialog("Không thể thao tác với thư mục");
+//                            }
+//                        } else {
+//                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
+//                        }
+//                    } catch (Exception e){
+//                        showErrorDialog("Lỗi trong quá trình tải file lên");
+//                    }
+//                }
+//            });
+            pnlInputFile.add(btnInputFile, BorderLayout.CENTER);
+            JPanel pnlChooseInput = new JPanel(new GridLayout(1, 1));
+            pnlChooseInput.setBackground(null);
+            pnlChooseInput.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+            JPanel pnlInputPath = new JPanel();
+            pnlInputPath.setLayout(new BoxLayout(pnlInputPath, BoxLayout.X_AXIS));
+            pnlInputPath.setBackground(null);
+            JLabel lblInputPath = new JLabel("Đường dẫn file nguồn:");
+            lblInputPath.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblInputPath.setFont(FontUtils.createRobotoFont("medium", 16f));
+            txtFieldInputVerify = new JTextField();
+            txtFieldInputVerify.setFont(FontUtils.createRobotoFont("regular", 16f));
+            pnlInputPath.add(lblInputPath);
+            pnlInputPath.add(txtFieldInputVerify);
+            pnlChooseInput.add(pnlInputPath);
+            pnlInputFile.add(pnlChooseInput, BorderLayout.SOUTH);
+            pnlVerify.add(pnlInputFile);
+            // sign and key input panel
+            JPanel pnlSignKey = new JPanel(new GridLayout(2, 1));
+            pnlSignKey.setBackground(null);
+            // sign panel
+            JPanel pnlSignValue = new JPanel(new BorderLayout());
+            pnlSignValue.setBackground(null);
+            JLabel lblSignValue = new JLabel("Nhập chữ ký:", JLabel.CENTER);
+            lblSignValue.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblSignValue.setFont(FontUtils.createRobotoFont("medium", 16f));
+            lblSignValue.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pnlSignValue.add(lblSignValue, BorderLayout.NORTH);
+            renderSignValueRow(pnlSignValue);
+            pnlSignKey.add(pnlSignValue);
+            // key panel
+            JPanel pnlKeyValue = new JPanel(new BorderLayout());
+            pnlKeyValue.setBackground(null);
+            JLabel lblPublicKey = new JLabel("Nhập public key:", JLabel.CENTER);
+            lblPublicKey.setBorder(BorderFactory.createEmptyBorder(5, 0, 5, 0));
+            lblPublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+            lblPublicKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+            pnlKeyValue.add(lblPublicKey, BorderLayout.NORTH);
+            renderVerifyKeyRow(pnlKeyValue);
+            pnlSignKey.add(pnlKeyValue);
+            // add sign and key input panel
+            pnlVerify.add(pnlSignKey);
+            // action button
+            JPanel pnlVerifyAction = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            pnlVerifyAction.setBackground(null);
+            pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+            JButton btnVerify = new JButton("Xác minh");
+            btnVerify.setActionCommand("sign");
+            btnVerify.addActionListener(this);
+            btnVerify.setPreferredSize(new Dimension(175, 40));
+            btnVerify.setBackground(Color.decode("#F3C623"));
+            btnVerify.setFont(FontUtils.createRobotoFont("medium", 24f));
+            pnlVerifyAction.add(btnVerify);
+            pnlVerify.add(pnlVerifyAction);
+            // output
+            JPanel pnlOutput = new JPanel(new GridLayout(1, 1));
+            pnlOutput.setPreferredSize(new Dimension(0, 120));
             JButton btnOutput = new JButton();
             btnOutput.setEnabled(false);
             btnOutput.setPreferredSize(new Dimension(0, 60));
@@ -442,7 +686,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
 
             // thêm vào panel
             pnlKey.add(pnlKeyTool);
-            panel.add(pnlKey);
+            panel.add(pnlKey, BorderLayout.CENTER);
         }
 
         private void renderSignValueRow(JPanel panel) {
