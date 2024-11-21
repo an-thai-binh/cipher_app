@@ -345,7 +345,6 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
                 break;
             }
         }
-
     }
 
     /**

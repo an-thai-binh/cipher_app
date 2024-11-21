@@ -58,7 +58,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlKeyTool.add(lblKeyToolTitle);
         // key size
         JPanel pnlKeySize = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnlKeySize.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlKeySize.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         JLabel lblKeySize = new JLabel("Kích thước", JLabel.CENTER);
         lblKeySize.setFont(FontUtils.createRobotoFont("medium", 16f));
         cbbKeySize = new JComboBox(cipher.getSupportedKeySize().toArray(new Integer[0]));
@@ -77,6 +77,7 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlKeyTool.add(pnlKeySize);
         // gen key button
         JPanel pnlGenKey = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pnlGenKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         JButton btnGenKey = new JButton("Tạo bộ key");
         btnGenKey.setActionCommand("genKey");
         btnGenKey.addActionListener(this);
@@ -84,16 +85,17 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlGenKey.add(btnGenKey);
         pnlKeyTool.add(pnlGenKey);
         // public key area
+        JLabel lblPublicKey = new JLabel("Public key", JLabel.CENTER);
+        lblPublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblPublicKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlKeyTool.add(lblPublicKey);
         JPanel pnlPublicKey = new JPanel(new BorderLayout());
-        pnlPublicKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlPublicKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         txtAreaPublicKey = new JTextArea();   // text area
         txtAreaPublicKey.setLineWrap(true);
         txtAreaPublicKey.setWrapStyleWord(true);
         txtAreaPublicKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaPublicKey.setForeground(Color.black);
-        TitledBorder borderPublic = BorderFactory.createTitledBorder("Public key");
-        borderPublic.setTitleFont(FontUtils.createRobotoFont("regular", 13f));
-        txtAreaPublicKey.setBorder(borderPublic);
         JScrollPane publicKeyScrollPane = new JScrollPane(txtAreaPublicKey);
         publicKeyScrollPane.setPreferredSize(new Dimension(0, 200));
         publicKeyScrollPane.setBackground(null);
@@ -112,16 +114,17 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
         pnlPublicKey.add(pnlPublicKeyTool, BorderLayout.SOUTH);
         pnlKeyTool.add(pnlPublicKey);   // add
         // private key area
+        JLabel lblPrivateKey = new JLabel("Private key", JLabel.CENTER);
+        lblPrivateKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblPrivateKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlKeyTool.add(lblPrivateKey);
         JPanel pnlPrivateKey = new JPanel(new BorderLayout());
-        pnlPrivateKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlPrivateKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         txtAreaPrivateKey = new JTextArea();   // text area
         txtAreaPrivateKey.setLineWrap(true);
         txtAreaPrivateKey.setWrapStyleWord(true);
         txtAreaPrivateKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaPrivateKey.setForeground(Color.black);
-        TitledBorder borderPrivate = BorderFactory.createTitledBorder("Private key");
-        borderPrivate.setTitleFont(FontUtils.createRobotoFont("regular", 13f));
-        txtAreaPrivateKey.setBorder(borderPrivate);
         JScrollPane privateKeyScrollPane = new JScrollPane(txtAreaPrivateKey);
         privateKeyScrollPane.setPreferredSize(new Dimension(0, 200));
         privateKeyScrollPane.setBackground(null);
@@ -425,16 +428,14 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
                             Timer timer = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
+                                    btnCopyPublicKey.setBackground(UIManager.getColor("Button.background"));
                                 }
                             });
                             timer.setRepeats(false);
                             timer.start();
-                        } else {
-                            btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
                         }
                     } catch (Exception ex) {
-                        btnCopyPublicKey.setBackground(Color.decode("#D9D9D9"));
+                        showErrorDialog(ex.getMessage());
                     }
                 }
                 break;
@@ -454,16 +455,14 @@ public class AsymmetricCipherView extends JPanel implements ActionListener {
                             Timer timer = new Timer(1000, new ActionListener() {
                                 @Override
                                 public void actionPerformed(ActionEvent e) {
-                                    btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
+                                    btnCopyPrivateKey.setBackground(UIManager.getColor("Button.background"));
                                 }
                             });
                             timer.setRepeats(false);
                             timer.start();
-                        } else {
-                            btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
                         }
                     } catch (Exception ex) {
-                        btnCopyPrivateKey.setBackground(Color.decode("#D9D9D9"));
+                        showErrorDialog(ex.getMessage());
                     }
                 }
                 break;
