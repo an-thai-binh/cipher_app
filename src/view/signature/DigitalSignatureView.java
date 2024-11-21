@@ -6,21 +6,26 @@ import utils.IconUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
+import java.io.*;
+import java.security.KeyPair;
+import java.util.Base64;
 import java.util.List;
 
 public class DigitalSignatureView extends JPanel implements ActionListener {
     private final DigitalSignature ds;
     private JComboBox cbbKeySize, cbbCipherName, cbbHashName;
     private JTextArea txtAreaPublicKey, txtAreaPrivateKey;
-    private JTextField txtFieldInputSign, txtFieldInputVerify;
     private JButton btnCopyPublicKey, btnCopyPrivateKey;
     public DigitalSignatureView(DigitalSignature ds) {
         this.ds = ds;
@@ -56,7 +61,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
         pnlKeyTool.add(lblKeyToolTitle);
         // key size
         JPanel pnlKeySize = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        pnlKeySize.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlKeySize.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
         JLabel lblKeySize = new JLabel("Kích thước", JLabel.CENTER);
         lblKeySize.setFont(FontUtils.createRobotoFont("medium", 16f));
         cbbKeySize = new JComboBox(DigitalSignature.KEY_SIZES);
@@ -75,6 +80,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
         pnlKeyTool.add(pnlKeySize);
         // gen key button
         JPanel pnlGenKey = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        pnlGenKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         JButton btnGenKey = new JButton("Tạo bộ key");
         btnGenKey.setActionCommand("genKey");
         btnGenKey.addActionListener(this);
@@ -82,16 +88,17 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
         pnlGenKey.add(btnGenKey);
         pnlKeyTool.add(pnlGenKey);
         // public key area
+        JLabel lblPublicKey = new JLabel("Public key", JLabel.CENTER);
+        lblPublicKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblPublicKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlKeyTool.add(lblPublicKey);
         JPanel pnlPublicKey = new JPanel(new BorderLayout());
-        pnlPublicKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlPublicKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         txtAreaPublicKey = new JTextArea();   // text area
         txtAreaPublicKey.setLineWrap(true);
         txtAreaPublicKey.setWrapStyleWord(true);
         txtAreaPublicKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaPublicKey.setForeground(Color.black);
-        TitledBorder borderPublic = BorderFactory.createTitledBorder("Public key");
-        borderPublic.setTitleFont(FontUtils.createRobotoFont("regular", 13f));
-        txtAreaPublicKey.setBorder(borderPublic);
         JScrollPane publicKeyScrollPane = new JScrollPane(txtAreaPublicKey);
         publicKeyScrollPane.setPreferredSize(new Dimension(0, 200));
         publicKeyScrollPane.setBackground(null);
@@ -110,16 +117,17 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
         pnlPublicKey.add(pnlPublicKeyTool, BorderLayout.SOUTH);
         pnlKeyTool.add(pnlPublicKey);   // add
         // private key area
+        JLabel lblPrivateKey = new JLabel("Private key", JLabel.CENTER);
+        lblPrivateKey.setFont(FontUtils.createRobotoFont("medium", 16f));
+        lblPrivateKey.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pnlKeyTool.add(lblPrivateKey);
         JPanel pnlPrivateKey = new JPanel(new BorderLayout());
-        pnlPrivateKey.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        pnlPrivateKey.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         txtAreaPrivateKey = new JTextArea();   // text area
         txtAreaPrivateKey.setLineWrap(true);
         txtAreaPrivateKey.setWrapStyleWord(true);
         txtAreaPrivateKey.setFont(FontUtils.createRobotoFont("regular", 16f));
         txtAreaPrivateKey.setForeground(Color.black);
-        TitledBorder borderPrivate = BorderFactory.createTitledBorder("Private key");
-        borderPrivate.setTitleFont(FontUtils.createRobotoFont("regular", 13f));
-        txtAreaPrivateKey.setBorder(borderPrivate);
         JScrollPane privateKeyScrollPane = new JScrollPane(txtAreaPrivateKey);
         privateKeyScrollPane.setPreferredSize(new Dimension(0, 200));
         privateKeyScrollPane.setBackground(null);
@@ -209,13 +217,150 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        String cmd = e.getActionCommand();
+        switch (cmd) {
+            case "genKey": {
+                try {
+                    ds.setAsymmetricCipher(cbbCipherName.getSelectedItem().toString());
+                    KeyPair keyPair = ds.genKey(Integer.parseInt(cbbKeySize.getSelectedItem().toString()));
+                    String pubKeyBase64 = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
+                    String priKeyBase64 = Base64.getEncoder().encodeToString(keyPair.getPrivate().getEncoded());
+                    txtAreaPublicKey.setText(pubKeyBase64);
+                    txtAreaPrivateKey.setText(priKeyBase64);
+                } catch (Exception ex) {
+                   showErrorDialog(ex.getMessage());
+                }
+                break;
+            }
+            case "copyPublicKey": {
+                String text = txtAreaPublicKey.getText();
+                StringSelection selection = new StringSelection(text);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, null);
+                // kiểm tra nội dung trong clipboard
+                Transferable transferData = clipboard.getContents(null);
+                if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
+                        if(copiedText.equals(text)) {
+                            btnCopyPublicKey.setBackground(Color.decode("#EDEBB9"));
+                            Timer timer = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    btnCopyPublicKey.setBackground(UIManager.getColor("Button.background"));
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.start();
+                        }
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
+                }
+                break;
+            }
+            case "copyPrivateKey": {
+                String text = txtAreaPrivateKey.getText();
+                StringSelection selection = new StringSelection(text);
+                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(selection, null);
+                // kiểm tra nội dung trong clipboard
+                Transferable transferData = clipboard.getContents(null);
+                if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
+                        if(copiedText.equals(text)) {
+                            btnCopyPrivateKey.setBackground(Color.decode("#EDEBB9"));
+                            Timer timer = new Timer(1000, new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    btnCopyPrivateKey.setBackground(UIManager.getColor("Button.background"));
+                                }
+                            });
+                            timer.setRepeats(false);
+                            timer.start();
+                        }
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
+                }
+                break;
+            }
+            case "savePublicKey": {
+                String text = txtAreaPublicKey.getText();
+                if(text.isEmpty()) {
+                    showErrorDialog("Không thể lưu key rỗng");
+                    break;
+                }
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Lưu key về máy tính");
+                int userOption = fileChooser.showSaveDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                        saveFile = new File(saveFile.getAbsolutePath() + ".dat");
+                    }
+                    // ghi key vào file
+                    try {
+                        FileOutputStream fos = new FileOutputStream(saveFile);
+                        PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"), true);
+                        pw.write(text);
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    }
+                }
+                break;
+            }
+            case "savePrivateKey": {
+                String text = txtAreaPrivateKey.getText();
+                if(text.isEmpty()) {
+                    showErrorDialog("Không thể lưu key rỗng");
+                    break;
+                }
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                fileChooser.setDialogTitle("Lưu key về máy tính");
+                int userOption = fileChooser.showSaveDialog(this.getParent());
+                if(userOption == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                        saveFile = new File(saveFile.getAbsolutePath() + ".dat");
+                    }
+                    // ghi key vào file
+                    try {
+                        FileOutputStream fos = new FileOutputStream(saveFile);
+                        PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"), true);
+                        pw.write(text);
+                        pw.close();
+                    } catch (FileNotFoundException ex) {
+                        showErrorDialog("Không tìm thấy file đích");
+                    } catch (UnsupportedEncodingException ex) {
+                        showErrorDialog("Kiểu encode không được hỗ trợ");
+                    }
+                }
+                break;
+            }
+        }
 
+    }
+
+    /**
+     * showErrorDialog	hiển thị cửa sổ thông báo lỗi
+     * @param message	thông báo
+     */
+    public void showErrorDialog(String message) {
+        JOptionPane.showMessageDialog(this.getParent(), message, "Lỗi thực thi", JOptionPane.ERROR_MESSAGE);
     }
 
     class DigitalSignatureTypeView extends JPanel implements ActionListener {
         private boolean isTextPanel;
         private JTextArea txtAreaInputSign, txtAreaOutputSign, txtAreaSignKey, txtAreaInputVerify, txtAreaVerifyKey, txtAreaSignValue;
-        private JButton btnLoadSignKey, btnLoadVerifyKey, btnCopySign, btnLoadSignValue;
+        private JTextField txtFieldInputSign, txtFieldInputVerify;
+        private JButton btnLoadSignKey, btnLoadVerifyKey, btnCopySign, btnLoadSignValue, btnOutput;
         public DigitalSignatureTypeView(boolean isTextPanel) {
             this.isTextPanel = isTextPanel;
             init();
@@ -481,7 +626,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             pnlVerifyAction.setBackground(null);
             pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             JButton btnVerify = new JButton("Xác minh");
-            btnVerify.setActionCommand("sign");
+            btnVerify.setActionCommand("verify");
             btnVerify.addActionListener(this);
             btnVerify.setPreferredSize(new Dimension(175, 40));
             btnVerify.setBackground(Color.decode("#F3C623"));
@@ -491,7 +636,9 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             // output
             JPanel pnlOutput = new JPanel(new GridLayout(1, 1));
             pnlOutput.setPreferredSize(new Dimension(0, 145));
-            JButton btnOutput = new JButton();
+            btnOutput = new JButton();
+            btnOutput.setFont(FontUtils.createRobotoFont("medium", 20f));
+            btnOutput.setOpaque(true);
             btnOutput.setEnabled(false);
             btnOutput.setPreferredSize(new Dimension(0, 60));
             pnlOutput.add(btnOutput);
@@ -591,7 +738,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             pnlVerifyAction.setBackground(null);
             pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             JButton btnVerify = new JButton("Xác minh");
-            btnVerify.setActionCommand("sign");
+            btnVerify.setActionCommand("verify");
             btnVerify.addActionListener(this);
             btnVerify.setPreferredSize(new Dimension(175, 40));
             btnVerify.setBackground(Color.decode("#F3C623"));
@@ -601,7 +748,9 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             // output
             JPanel pnlOutput = new JPanel(new GridLayout(1, 1));
             pnlOutput.setPreferredSize(new Dimension(0, 120));
-            JButton btnOutput = new JButton();
+            btnOutput = new JButton();
+            btnOutput.setFont(FontUtils.createRobotoFont("medium", 20f));
+            btnOutput.setOpaque(true);
             btnOutput.setEnabled(false);
             btnOutput.setPreferredSize(new Dimension(0, 60));
             pnlOutput.add(btnOutput);
@@ -731,7 +880,81 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            String cmd = e.getActionCommand();
+            switch (cmd) {
+                case "sign": {
+                    // check input
+                    String input = txtAreaInputSign.getText();
+                    if(input.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập nội dung cần ký");
+                        break;
+                    }
+                    // check key
+                    String keyStr = txtAreaSignKey.getText();
+                    if(keyStr.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập private key");
+                        break;
+                    }
+                    try {
+                        ds.setAsymmetricCipher(cbbCipherName.getSelectedItem().toString());
+                        ds.setHashAlgorithm(cbbHashName.getSelectedItem().toString());
+                        ds.setSignature();
+                        byte[] key = Base64.getDecoder().decode(keyStr);
+                        ds.loadPrivateKey(key);
+                        txtAreaOutputSign.setText(ds.sign(input));
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
+                    break;
+                }
+                case "verify": {
+                    // check input
+                    String input = txtAreaInputVerify.getText();
+                    if(input.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập nội dung cần ký");
+                        break;
+                    }
+                    // check sign
+                    String signBase64 = txtAreaSignValue.getText();
+                    if(signBase64.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập chữ ký số");
+                        break;
+                    }
+                    // check key
+                    String keyStr = txtAreaVerifyKey.getText();
+                    if(keyStr.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập private key");
+                        break;
+                    }
+                    try {
+                        ds.setAsymmetricCipher(cbbCipherName.getSelectedItem().toString());
+                        ds.setHashAlgorithm(cbbHashName.getSelectedItem().toString());
+                        ds.setSignature();
+                        byte[] key = Base64.getDecoder().decode(keyStr);
+                        ds.loadPublicKey(key);
+                        boolean isValid = ds.verify(input, signBase64);
+                        System.out.println(isValid);
+                        if(isValid) {
+                            btnOutput.setBackground(Color.decode("#03962a"));
+                            btnOutput.setForeground(Color.decode("#03962a"));
+                            btnOutput.setText(new String("Thông tin hợp lệ").toUpperCase());
+                        } else {
+                            btnOutput.setBackground(Color.RED);
+                            btnOutput.setForeground(Color.RED);
+                            btnOutput.setText(new String("Thông tin không hợp lệ").toUpperCase());
+                        }
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
+                    break;
+                }
+                case "signFile": {
+                    break;
+                }
+                case "verifyFile": {
+                    break;
+                }
+            }
         }
     }
 }
