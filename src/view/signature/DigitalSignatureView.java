@@ -881,6 +881,21 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             String cmd = e.getActionCommand();
             switch (cmd) {
+                case "loadSignKey": {
+                    break;
+                }
+                case "copySign": {
+                    break;
+                }
+                case "saveSign": {
+                    break;
+                }
+                case "loadSign": {
+                    break;
+                }
+                case "loadVerifyKey": {
+                    break;
+                }
                 case "sign": {
                     // check input
                     String input = txtAreaInputSign.getText();
@@ -932,7 +947,6 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
                         byte[] key = Base64.getDecoder().decode(keyStr);
                         ds.loadPublicKey(key);
                         boolean isValid = ds.verify(input, signBase64);
-                        System.out.println(isValid);
                         if(isValid) {
                             btnOutput.setBackground(Color.decode("#03962a"));
                             btnOutput.setForeground(Color.decode("#03962a"));
