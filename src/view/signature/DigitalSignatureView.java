@@ -3,6 +3,7 @@ package view.signature;
 import model.signature.DigitalSignature;
 import utils.FontUtils;
 import utils.IconUtils;
+import view.hash.HashAlgorithmView;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -480,29 +481,29 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             btnInputFile.setBackground(Color.WHITE);
             btnInputFile.setFont(FontUtils.createRobotoFont("medium", 20f));
             btnInputFile.setIcon(IconUtils.UPLOAD_ICON);
-            btnInputFile.setActionCommand("chooseInput");
+            btnInputFile.setActionCommand("chooseSignFile");
             btnInputFile.addActionListener(this);
-//            btnInputFile.setDropTarget(new DropTarget() {
-//                @Override
-//                public synchronized void drop(DropTargetDropEvent dtde) {
-//                    try {
-//                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
-//                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-//                        if(droppedFiles.size() == 1) {
-//                            File file = droppedFiles.get(0);
-//                            if(!file.isDirectory()) {
-//                                txtFieldInput.setText(file.getAbsolutePath());
-//                            } else {
-//                                showErrorDialog("Không thể thao tác với thư mục");
-//                            }
-//                        } else {
-//                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
-//                        }
-//                    } catch (Exception e){
-//                        showErrorDialog("Lỗi trong quá trình tải file lên");
-//                    }
-//                }
-//            });
+            btnInputFile.setDropTarget(new DropTarget() {
+                @Override
+                public synchronized void drop(DropTargetDropEvent dtde) {
+                    try {
+                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        if(droppedFiles.size() == 1) {
+                            File file = droppedFiles.get(0);
+                            if(!file.isDirectory()) {
+                                txtFieldInputSign.setText(file.getAbsolutePath());
+                            } else {
+                                showErrorDialog("Không thể thao tác với thư mục");
+                            }
+                        } else {
+                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
+                        }
+                    } catch (Exception e){
+                        showErrorDialog("Lỗi trong quá trình tải file lên");
+                    }
+                }
+            });
             pnlInputFile.add(btnInputFile, BorderLayout.CENTER);
             JPanel pnlChooseInput = new JPanel(new GridLayout(1, 1));
             pnlChooseInput.setBackground(null);
@@ -532,7 +533,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             JPanel pnlSignAction = new JPanel(new FlowLayout(FlowLayout.CENTER));
             pnlSignAction.setBackground(null);
             JButton btnSign = new JButton("Ký");
-            btnSign.setActionCommand("sign");
+            btnSign.setActionCommand("signFile");
             btnSign.addActionListener(this);
             btnSign.setPreferredSize(new Dimension(175, 40));
             btnSign.setBackground(Color.decode("#F3C623"));
@@ -668,29 +669,29 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             btnInputFile.setBackground(Color.WHITE);
             btnInputFile.setFont(FontUtils.createRobotoFont("medium", 20f));
             btnInputFile.setIcon(IconUtils.UPLOAD_ICON);
-            btnInputFile.setActionCommand("chooseInput");
+            btnInputFile.setActionCommand("chooseVerifyFile");
             btnInputFile.addActionListener(this);
-//            btnInputFile.setDropTarget(new DropTarget() {
-//                @Override
-//                public synchronized void drop(DropTargetDropEvent dtde) {
-//                    try {
-//                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
-//                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
-//                        if(droppedFiles.size() == 1) {
-//                            File file = droppedFiles.get(0);
-//                            if(!file.isDirectory()) {
-//                                txtFieldInput.setText(file.getAbsolutePath());
-//                            } else {
-//                                showErrorDialog("Không thể thao tác với thư mục");
-//                            }
-//                        } else {
-//                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
-//                        }
-//                    } catch (Exception e){
-//                        showErrorDialog("Lỗi trong quá trình tải file lên");
-//                    }
-//                }
-//            });
+            btnInputFile.setDropTarget(new DropTarget() {
+                @Override
+                public synchronized void drop(DropTargetDropEvent dtde) {
+                    try {
+                        dtde.acceptDrop(DnDConstants.ACTION_COPY);
+                        java.util.List<File> droppedFiles = (List<File>) dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
+                        if(droppedFiles.size() == 1) {
+                            File file = droppedFiles.get(0);
+                            if(!file.isDirectory()) {
+                                txtFieldInputVerify.setText(file.getAbsolutePath());
+                            } else {
+                                showErrorDialog("Không thể thao tác với thư mục");
+                            }
+                        } else {
+                            showErrorDialog("Chương trình chỉ nhận 1 file cùng lúc");
+                        }
+                    } catch (Exception e){
+                        showErrorDialog("Lỗi trong quá trình tải file lên");
+                    }
+                }
+            });
             pnlInputFile.add(btnInputFile, BorderLayout.CENTER);
             JPanel pnlChooseInput = new JPanel(new GridLayout(1, 1));
             pnlChooseInput.setBackground(null);
@@ -738,7 +739,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             pnlVerifyAction.setBackground(null);
             pnlVerifyAction.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
             JButton btnVerify = new JButton("Xác minh");
-            btnVerify.setActionCommand("verify");
+            btnVerify.setActionCommand("verifyFile");
             btnVerify.addActionListener(this);
             btnVerify.setPreferredSize(new Dimension(175, 40));
             btnVerify.setBackground(Color.decode("#F3C623"));
@@ -866,7 +867,7 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             JPanel pnlSignTool = new JPanel(new GridLayout(1, 1));
             pnlSignTool.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             btnLoadSignValue = new JButton(IconUtils.LOAD_ICON);
-            btnLoadSignValue.setActionCommand("loadSignValue");
+            btnLoadSignValue.setActionCommand("loadSign");
             btnLoadSignValue.addActionListener(this);
             btnLoadSignValue.setPreferredSize(new Dimension(64, 44));
             btnLoadSignValue.setBackground(Color.decode("#D9D9D9"));
@@ -1043,6 +1044,26 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
                     }
                     break;
                 }
+                case "chooseSignFile": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Chọn file thao tác");
+                    int userOption = fileChooser.showOpenDialog(DigitalSignatureView.this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File inputFile = fileChooser.getSelectedFile();
+                        txtFieldInputSign.setText(inputFile.getAbsolutePath());
+                    }
+                    break;
+                }
+                case "chooseVerifyFile": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Chọn file thao tác");
+                    int userOption = fileChooser.showOpenDialog(DigitalSignatureView.this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File inputFile = fileChooser.getSelectedFile();
+                        txtFieldInputVerify.setText(inputFile.getAbsolutePath());
+                    }
+                    break;
+                }
                 case "sign": {
                     // check input
                     String input = txtAreaInputSign.getText();
@@ -1109,9 +1130,60 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
                     break;
                 }
                 case "signFile": {
+                    // src
+                    String src = txtFieldInputSign.getText();
+                    // check key
+                    String keyStr = txtAreaSignKey.getText();
+                    if(keyStr.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập private key");
+                        break;
+                    }
+                    try {
+                        ds.setAsymmetricCipher(cbbCipherName.getSelectedItem().toString());
+                        ds.setHashAlgorithm(cbbHashName.getSelectedItem().toString());
+                        ds.setSignature();
+                        byte[] key = Base64.getDecoder().decode(keyStr);
+                        ds.loadPrivateKey(key);
+                        txtAreaOutputSign.setText(ds.signFile(src));
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
                     break;
                 }
                 case "verifyFile": {
+                    // src
+                    String src = txtFieldInputVerify.getText();
+                    // check sign
+                    String signBase64 = txtAreaSignValue.getText();
+                    if(signBase64.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập chữ ký số");
+                        break;
+                    }
+                    // check key
+                    String keyStr = txtAreaVerifyKey.getText();
+                    if(keyStr.isEmpty()) {
+                        showErrorDialog("Vui lòng nhập private key");
+                        break;
+                    }
+                    try {
+                        ds.setAsymmetricCipher(cbbCipherName.getSelectedItem().toString());
+                        ds.setHashAlgorithm(cbbHashName.getSelectedItem().toString());
+                        ds.setSignature();
+                        byte[] key = Base64.getDecoder().decode(keyStr);
+                        ds.loadPublicKey(key);
+                        boolean isValid = ds.verifyFile(src, signBase64);
+                        if(isValid) {
+                            btnOutput.setBackground(Color.decode("#03962a"));
+                            btnOutput.setForeground(Color.decode("#03962a"));
+                            btnOutput.setText(new String("Thông tin hợp lệ").toUpperCase());
+                        } else {
+                            btnOutput.setBackground(Color.RED);
+                            btnOutput.setForeground(Color.RED);
+                            btnOutput.setText(new String("Thông tin không hợp lệ").toUpperCase());
+                        }
+                    } catch (Exception ex) {
+                        showErrorDialog(ex.getMessage());
+                    }
                     break;
                 }
             }
