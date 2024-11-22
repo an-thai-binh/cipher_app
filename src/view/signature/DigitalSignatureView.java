@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -882,18 +883,164 @@ public class DigitalSignatureView extends JPanel implements ActionListener {
             String cmd = e.getActionCommand();
             switch (cmd) {
                 case "loadSignKey": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                    fileChooser.setDialogTitle("Tải key từ máy tính");
+                    int userOption = fileChooser.showOpenDialog(this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File saveFile = fileChooser.getSelectedFile();
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                            showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
+                            break;
+                        }
+                        // đọc key từ file
+                        try {
+                            FileInputStream fis = new FileInputStream(saveFile);
+                            BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                            txtAreaSignKey.setText("");
+                            String line;
+                            ArrayList<String> lineList = new ArrayList<>();
+                            while((line = br.readLine()) != null) {
+                                lineList.add(line);
+                            }
+                            for(int i = 0; i < lineList.size(); i++) {
+                                txtAreaSignKey.append(lineList.get(i));
+                                if(i < lineList.size() - 1) txtAreaSignKey.append("\n");    // chỉ thêm \n ở dòng cuối cùng
+                            }
+                        } catch (FileNotFoundException ex) {
+                            showErrorDialog("Không tìm thấy file đích");
+                        } catch (UnsupportedEncodingException ex) {
+                            showErrorDialog("Kiểu encode không được hỗ trợ");
+                        } catch (IOException ex) {
+                            showErrorDialog("Có lỗi xảy ra trong quá trình đọc file");
+                        }
+                    }
                     break;
                 }
                 case "copySign": {
+                    String text = txtAreaOutputSign.getText();
+                    StringSelection selection = new StringSelection(text);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(selection, null);
+                    // kiểm tra nội dung trong clipboard
+                    Transferable transferData = clipboard.getContents(null);
+                    if(transferData != null && transferData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                        try {
+                            String copiedText = (String) transferData.getTransferData(DataFlavor.stringFlavor);
+                            if(copiedText.equals(text)) {
+                                btnCopySign.setBackground(Color.decode("#EDEBB9"));
+                                Timer timer = new Timer(1000, new ActionListener() {
+                                    @Override
+                                    public void actionPerformed(ActionEvent e) {
+                                        btnCopySign.setBackground(UIManager.getColor("Button.background"));
+                                    }
+                                });
+                                timer.setRepeats(false);
+                                timer.start();
+                            }
+                        } catch (Exception ex) {
+                            showErrorDialog(ex.getMessage());
+                        }
+                    }
                     break;
                 }
                 case "saveSign": {
+                    String text = txtAreaOutputSign.getText();
+                    if(text.isEmpty()) {
+                        showErrorDialog("Không thể lưu key rỗng");
+                        break;
+                    }
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                    fileChooser.setDialogTitle("Lưu key về máy tính");
+                    int userOption = fileChooser.showSaveDialog(this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File saveFile = fileChooser.getSelectedFile();
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {   // thêm đuôi .dat nếu chưa có
+                            saveFile = new File(saveFile.getAbsolutePath() + ".dat");
+                        }
+                        // ghi key vào file
+                        try {
+                            FileOutputStream fos = new FileOutputStream(saveFile);
+                            PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos, "UTF-8"), true);
+                            pw.write(text);
+                            pw.close();
+                        } catch (FileNotFoundException ex) {
+                            showErrorDialog("Không tìm thấy file đích");
+                        } catch (UnsupportedEncodingException ex) {
+                            showErrorDialog("Kiểu encode không được hỗ trợ");
+                        }
+                    }
                     break;
                 }
                 case "loadSign": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                    fileChooser.setDialogTitle("Tải key từ máy tính");
+                    int userOption = fileChooser.showOpenDialog(this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File saveFile = fileChooser.getSelectedFile();
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                            showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
+                            break;
+                        }
+                        // đọc key từ file
+                        try {
+                            FileInputStream fis = new FileInputStream(saveFile);
+                            BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                            txtAreaSignValue.setText("");
+                            String line;
+                            ArrayList<String> lineList = new ArrayList<>();
+                            while((line = br.readLine()) != null) {
+                                lineList.add(line);
+                            }
+                            for(int i = 0; i < lineList.size(); i++) {
+                                txtAreaSignValue.append(lineList.get(i));
+                                if(i < lineList.size() - 1) txtAreaSignValue.append("\n");    // chỉ thêm \n ở dòng cuối cùng
+                            }
+                        } catch (FileNotFoundException ex) {
+                            showErrorDialog("Không tìm thấy file đích");
+                        } catch (UnsupportedEncodingException ex) {
+                            showErrorDialog("Kiểu encode không được hỗ trợ");
+                        } catch (IOException ex) {
+                            showErrorDialog("Có lỗi xảy ra trong quá trình đọc file");
+                        }
+                    }
                     break;
                 }
                 case "loadVerifyKey": {
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setFileFilter(new FileNameExtensionFilter("DAT files (.dat)", "dat"));
+                    fileChooser.setDialogTitle("Tải key từ máy tính");
+                    int userOption = fileChooser.showOpenDialog(this.getParent());
+                    if(userOption == JFileChooser.APPROVE_OPTION) {
+                        File saveFile = fileChooser.getSelectedFile();
+                        if(!saveFile.getAbsolutePath().endsWith(".dat")) {  // báo lỗi nếu không phải file .dat
+                            showErrorDialog("Chương trình chỉ hỗ trợ file .dat");
+                            break;
+                        }
+                        // đọc key từ file
+                        try {
+                            FileInputStream fis = new FileInputStream(saveFile);
+                            BufferedReader br = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+                            txtAreaVerifyKey.setText("");
+                            String line;
+                            ArrayList<String> lineList = new ArrayList<>();
+                            while((line = br.readLine()) != null) {
+                                lineList.add(line);
+                            }
+                            for(int i = 0; i < lineList.size(); i++) {
+                                txtAreaVerifyKey.append(lineList.get(i));
+                                if(i < lineList.size() - 1) txtAreaVerifyKey.append("\n");    // chỉ thêm \n ở dòng cuối cùng
+                            }
+                        } catch (FileNotFoundException ex) {
+                            showErrorDialog("Không tìm thấy file đích");
+                        } catch (UnsupportedEncodingException ex) {
+                            showErrorDialog("Kiểu encode không được hỗ trợ");
+                        } catch (IOException ex) {
+                            showErrorDialog("Có lỗi xảy ra trong quá trình đọc file");
+                        }
+                    }
                     break;
                 }
                 case "sign": {
