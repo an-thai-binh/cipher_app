@@ -22,7 +22,7 @@ public class CipherView extends JFrame implements ICipherView {
 		setTitle("Cipher Application");
 		setIconImage(IconUtils.LOGO_CIPHER.getImage());
 		setSize(1216, 834);
-		setResizable(false);
+//		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setUIDefault();
