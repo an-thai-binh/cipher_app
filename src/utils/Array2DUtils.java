@@ -42,14 +42,4 @@ public class Array2DUtils {
         }
         return result;
     }
-
-//    public static void main(String[] args) {
-//        int[][] arr = {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
-//        String text = toString(arr);
-//        System.out.println(text);
-//        int[][] arr2 = toInt2DArray(text);
-//        System.out.println(arr2.length + " " + arr2[0].length);
-//        text = toString(arr2);
-//        System.out.println(text);
-//    }
 }
