@@ -400,22 +400,22 @@ public class HillCipher implements IClassicalCipher  {
 		return (x2 < 0 ? x2 + baseMod : x2);	// nếu x2 < 0 thì + cho mod ban đầu
 	}
 	
-	public static void main(String[] args) throws Exception {
-		HillCipher cip = new HillCipher(LanguageSupport.EN, 2);
-//		cip.loadKey("lidh");
-		int[][]	 m = {{3, 3}, {2, 5}};
-		cip.loadKey(m);
-		System.out.println(cip.encrypt("dhnonglam"));
-//		int[][] m = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
-
-
-//		int[][]	m2 = cip.inverseMatrixHillCipher(m);
-//		for(int i = 0; i < m2.length; i++) {
-//			for(int j = 0; j < m2[i].length; j++) {
-//				System.out.print(m2[i][j] + "\t");
-//			}
-//			System.out.println();
-//		}
-		System.out.println(cip.decrypt("epdsfehwht"));
-	}
+//	public static void main(String[] args) throws Exception {
+//		HillCipher cip = new HillCipher(LanguageSupport.EN, 2);
+////		cip.loadKey("lidh");
+//		int[][]	 m = {{3, 3}, {2, 5}};
+//		cip.loadKey(m);
+//		System.out.println(cip.encrypt("dhnonglam"));
+////		int[][] m = {{6, 24, 1}, {13, 16, 10}, {20, 17, 15}};
+//
+//
+////		int[][]	m2 = cip.inverseMatrixHillCipher(m);
+////		for(int i = 0; i < m2.length; i++) {
+////			for(int j = 0; j < m2[i].length; j++) {
+////				System.out.print(m2[i][j] + "\t");
+////			}
+////			System.out.println();
+////		}
+//		System.out.println(cip.decrypt("epdsfehwht"));
+//	}
 }

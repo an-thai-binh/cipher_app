@@ -197,10 +197,10 @@ public class AffineCipher implements IClassicalCipher {
 		return result.toString();
 	}
 	
-	public static void main(String[] args) throws Exception {
-		AffineCipher cip = new AffineCipher(LanguageSupport.VI);
-		cip.loadKey(new AffineKey(7, 3));
-		System.out.println(cip.encrypt("KHOA CONG NGHE THONG TIN"));
-		System.out.println(cip.decrypt("ÒYỪẢ ỐỪÚỨ ÚỨYƯ PYỪÚỨ PĂÚ"));
-	}
+//	public static void main(String[] args) throws Exception {
+//		AffineCipher cip = new AffineCipher(LanguageSupport.VI);
+//		cip.loadKey(new AffineKey(7, 3));
+//		System.out.println(cip.encrypt("KHOA CONG NGHE THONG TIN"));
+//		System.out.println(cip.decrypt("ÒYỪẢ ỐỪÚỨ ÚỨYƯ PYỪÚỨ PĂÚ"));
+//	}
 }

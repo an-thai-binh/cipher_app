@@ -142,11 +142,11 @@ public class VigenereCipher implements IClassicalCipher {
 		return result.toString();
 	}
 
-	public static void main(String[] args) throws Exception {
-		VigenereCipher cip = new VigenereCipher(LanguageSupport.VI);
-		cip.loadKey("cipher");
-//		System.out.println(cip.generateRepeatKey("ONEONEONE", cip.key));
-		System.out.println(cip.encrypt("hello"));
-		System.out.println(cip.decrypt("ồơèữt"));
-	}
+//	public static void main(String[] args) throws Exception {
+//		VigenereCipher cip = new VigenereCipher(LanguageSupport.VI);
+//		cip.loadKey("cipher");
+////		System.out.println(cip.generateRepeatKey("ONEONEONE", cip.key));
+//		System.out.println(cip.encrypt("hello"));
+//		System.out.println(cip.decrypt("ồơèữt"));
+//	}
 }

@@ -125,21 +125,21 @@ public class CeasarCipher implements IClassicalCipher {
 		return result.toString();
 	}
 	
-	public static void main(String[] args) throws Exception {
-		int key = 10;
-		// english test
-		CeasarCipher cip = new CeasarCipher(LanguageSupport.EN);
-		cip.loadKey(key);
-		String text = "It's a bad trip";
-		System.out.println(cip.encrypt(text));
-		// decrypt english
-		System.out.println(cip.decrypt("Sd'c k lkn dbsz"));
-		// vietnamese test
-		cip = new CeasarCipher(LanguageSupport.VI);
-		cip.loadKey(key);
-		text = "Thắng lợi trong tay tạo";
-		System.out.println(cip.encrypt(text));
-		// decrypt vietnamese
-		System.out.println(cip.decrypt("Ữnậổm ốụo ữừỗổm ữẵẳ ữẩỗ"));
-	}
+//	public static void main(String[] args) throws Exception {
+//		int key = 10;
+//		// english test
+//		CeasarCipher cip = new CeasarCipher(LanguageSupport.EN);
+//		cip.loadKey(key);
+//		String text = "It's a bad trip";
+//		System.out.println(cip.encrypt(text));
+//		// decrypt english
+//		System.out.println(cip.decrypt("Sd'c k lkn dbsz"));
+//		// vietnamese test
+//		cip = new CeasarCipher(LanguageSupport.VI);
+//		cip.loadKey(key);
+//		text = "Thắng lợi trong tay tạo";
+//		System.out.println(cip.encrypt(text));
+//		// decrypt vietnamese
+//		System.out.println(cip.decrypt("Ữnậổm ốụo ữừỗổm ữẵẳ ữẩỗ"));
+//	}
 }

@@ -136,23 +136,23 @@ public class SubstitutionCipher implements IClassicalCipher {
 		return result.toString();
 	}
 	
-	public static void main(String[] args) throws Exception {
-		// english test
-		SubstitutionCipher cip = new SubstitutionCipher(LanguageSupport.EN);
-		String generatedKey = (String) cip.genKey();
-		System.out.println("Alphabet: " + cip.alphabet);
-		System.out.println("Generated key: " + generatedKey);
-		String encryptedText = cip.encrypt("HAPPY NEW YEAR");
-		System.out.println(encryptedText);
-		System.out.println(cip.decrypt(encryptedText));
-		// vietnamese test
-		System.out.println("---");
-		cip = new SubstitutionCipher(LanguageSupport.VI);
-		generatedKey = (String) cip.genKey();
-		System.out.println(cip.alphabet);
-		System.out.println(generatedKey);
-		encryptedText = cip.encrypt("Xin chào mọi người");
-		System.out.println(encryptedText);
-		System.out.println(cip.decrypt(encryptedText));
-	}
+//	public static void main(String[] args) throws Exception {
+//		// english test
+//		SubstitutionCipher cip = new SubstitutionCipher(LanguageSupport.EN);
+//		String generatedKey = (String) cip.genKey();
+//		System.out.println("Alphabet: " + cip.alphabet);
+//		System.out.println("Generated key: " + generatedKey);
+//		String encryptedText = cip.encrypt("HAPPY NEW YEAR");
+//		System.out.println(encryptedText);
+//		System.out.println(cip.decrypt(encryptedText));
+//		// vietnamese test
+//		System.out.println("---");
+//		cip = new SubstitutionCipher(LanguageSupport.VI);
+//		generatedKey = (String) cip.genKey();
+//		System.out.println(cip.alphabet);
+//		System.out.println(generatedKey);
+//		encryptedText = cip.encrypt("Xin chào mọi người");
+//		System.out.println(encryptedText);
+//		System.out.println(cip.decrypt(encryptedText));
+//	}
 }
