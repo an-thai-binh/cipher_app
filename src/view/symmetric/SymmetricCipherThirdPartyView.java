@@ -1,6 +1,6 @@
 package view.symmetric;
 
-import model.symmetric.SymmetricCipherThirdParty;
+import model.symmetric.ISymmetricCipherThirdParty;
 import org.bouncycastle.crypto.params.KeyParameter;
 import utils.FontUtils;
 import utils.IconUtils;
@@ -22,10 +22,10 @@ import java.io.*;
 import java.util.Base64;
 
 public class SymmetricCipherThirdPartyView extends JPanel {
-    private final SymmetricCipherThirdParty cipher;
+    private final ISymmetricCipherThirdParty cipher;
     private CardLayout cardLayout;
 
-    public SymmetricCipherThirdPartyView(SymmetricCipherThirdParty cipher) {
+    public SymmetricCipherThirdPartyView(ISymmetricCipherThirdParty cipher) {
         this.cipher = cipher;
         init();
     }
@@ -45,19 +45,19 @@ public class SymmetricCipherThirdPartyView extends JPanel {
     }
 
     class SymmetricTypeView extends JPanel implements ActionListener {
-        private final SymmetricCipherThirdParty cipher;
+        private final ISymmetricCipherThirdParty cipher;
         private boolean isTextPanel;
         private DefaultComboBoxModel<String> defaultPaddingModel, noPaddingModel;
         private JComboBox cbbKeySize, cbbMode, cbbPadding;
-        private JTextField txtFieldKeySize, txtFieldIv, txtFieldInput, txtFieldOutput;
+        private JTextField txtFieldIv, txtFieldInput, txtFieldOutput;
         private JTextArea txtAreaKey, txtAreaInput, txtAreaOutput;
         private JButton btnGenIv, btnCopyKey, btnOpenFileLocation;
         private JLabel lblStatus, lblResultPath;
 
-        public SymmetricTypeView(SymmetricCipherThirdParty cipher, boolean isTextPanel) {
+        public SymmetricTypeView(ISymmetricCipherThirdParty cipher, boolean isTextPanel) {
             this.cipher = cipher;
             this.isTextPanel = isTextPanel;
-            this.defaultPaddingModel = new DefaultComboBoxModel<>(SymmetricCipherThirdParty.PADDINGS);
+            this.defaultPaddingModel = new DefaultComboBoxModel<>(cipher.getSupportedPadding().toArray(new String[0]));
             this.noPaddingModel = new DefaultComboBoxModel<>(new String[]{"NoPadding"});
             this.renderSelf();
             if (isTextPanel)
@@ -262,7 +262,7 @@ public class SymmetricCipherThirdPartyView extends JPanel {
             JLabel lblMode = new JLabel("Mode", JLabel.CENTER);
             lblMode.setPreferredSize(new Dimension(150, 0));
             lblMode.setFont(FontUtils.createRobotoFont("regular", 20f));
-            cbbMode = new JComboBox(SymmetricCipherThirdParty.MODES);
+            cbbMode = new JComboBox(cipher.getSupportedMode().toArray(new String[0]));
             cbbMode.setBackground(Color.WHITE);
             cbbMode.setRenderer(new DefaultListCellRenderer() {
                 @Override

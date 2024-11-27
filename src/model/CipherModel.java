@@ -4,8 +4,8 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
 import model.signature.DigitalSignature;
+import model.symmetric.ISymmetricCipherThirdParty;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherThirdParty;
 
 public class CipherModel implements ICipherModel {
 	private final CipherFactory cipherFactory;
@@ -42,7 +42,7 @@ public class CipherModel implements ICipherModel {
 	 * @return SymmetricCipher
 	 */
 	@Override
-	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
+	public ISymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
 		return cipherFactory.createSymmetricCipherThirdParty(cipher);
 	}
 

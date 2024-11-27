@@ -4,8 +4,8 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
 import model.signature.DigitalSignature;
+import model.symmetric.ISymmetricCipherThirdParty;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherThirdParty;
 import utils.IconUtils;
 import view.asymmetric.AsymmetricCipherView;
 import view.classical.ClassicalCipherView;
@@ -95,7 +95,7 @@ public class CipherView extends JFrame implements ICipherView {
 	 * @param symmetricCipher	đối tượng thực hiện
 	 */
 	@Override
-	public void createSymmetricCipherThirdPartyView(SymmetricCipherThirdParty symmetricCipher) {
+	public void createSymmetricCipherThirdPartyView(ISymmetricCipherThirdParty symmetricCipher) {
 		JFrame cipherView = new JFrame();
 		cipherView.setIconImage(IconUtils.LOGO_CIPHER.getImage());
 		cipherView.setDefaultCloseOperation(DISPOSE_ON_CLOSE);

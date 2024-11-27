@@ -5,8 +5,8 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
 import model.signature.DigitalSignature;
+import model.symmetric.ISymmetricCipherThirdParty;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherThirdParty;
 import utils.CipherSupport;
 import utils.LanguageSupport;
 import view.ICipherView;
@@ -54,7 +54,7 @@ public class CipherController implements ICipherController {
 					view.showErrorDialog("Không khởi tạo được thuật toán");
 				}
 			} else if (CipherSupport.isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY, cmd)) {    // đối xứng hiện đại thư viện thứ 3
-				SymmetricCipherThirdParty cipher = null;
+				ISymmetricCipherThirdParty cipher = null;
 				try {
 					cipher = model.createSymmetricCipherThirdParty(cmd);
 				} catch (Exception ex) {

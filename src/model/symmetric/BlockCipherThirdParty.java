@@ -20,15 +20,13 @@ import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.*;
 
-public class SymmetricCipherThirdParty {
-    public static final String[] MODES = new String[]{"ECB", "CBC", "SIC"};
-    public static final String[] PADDINGS = new String[]{"PKCS7Padding", "ISO10126d2Padding"};
+public class BlockCipherThirdParty implements ISymmetricCipherThirdParty {
     private BlockCipher engine;
     private BufferedBlockCipher cip;
     private KeyParameter key;
     private byte[] iv;
 
-    public SymmetricCipherThirdParty(String engine) throws Exception {
+    public BlockCipherThirdParty(String engine) throws Exception {
         switch (engine) {
             case "Serpent": {
                 this.engine = new SerpentEngine();
@@ -56,12 +54,37 @@ public class SymmetricCipherThirdParty {
         return engine.getAlgorithmName();
     }
 
+    /**
+     * getSupportedKeySize  lấy ra kích thước key thuật toán hỗ trợ
+     * @return List<Integer>
+     */
     public List<Integer> getSupportedKeySize() {
         List<Integer> result = new ArrayList<>();
         result.add(engine.getBlockSize() * 8);
         return result;
     }
 
+    @Override
+    public List<String> getSupportedMode() {
+        List<String> result = new ArrayList<>();
+        result.add("ECB");
+        result.add("CBC");
+        result.add("SIC");
+        return result;
+    }
+
+    @Override
+    public List<String> getSupportedPadding() {
+        List<String> result = new ArrayList<>();
+        result.add("PKCS7Padding");
+        result.add("ISO10126d2Padding");
+        return result;
+    }
+
+    /**
+     * getSupportedIvOrNonceSize    lấy ra kích thước iv hoặc nonce thuật toán hỗ trợ
+     * @return int
+     */
     public int getSupportedIvOrNonceSize() {
         return engine.getBlockSize();
     }
@@ -73,7 +96,7 @@ public class SymmetricCipherThirdParty {
      * @return BlockCipher
      * @throws Exception    thuật toán không hợp lệ
      */
-    private BlockCipher createMode(String name, BlockCipher cipher) throws Exception {
+    public BlockCipher createMode(String name, BlockCipher cipher) throws Exception {
         switch (name) {
             case "ECB": {
                 return cipher;
@@ -96,7 +119,7 @@ public class SymmetricCipherThirdParty {
      * @return BlockCipherPadding
      * @throws Exception    padding không hợp lệ
      */
-    private BlockCipherPadding createPadding(String name) throws Exception {
+    public BlockCipherPadding createPadding(String name) throws Exception {
         switch (name) {
             case "PKCS7Padding": {
                 return new PKCS7Padding();

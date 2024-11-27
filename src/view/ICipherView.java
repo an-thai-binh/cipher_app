@@ -4,8 +4,8 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
 import model.signature.DigitalSignature;
+import model.symmetric.ISymmetricCipherThirdParty;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherThirdParty;
 
 import java.awt.event.ActionListener;
 
@@ -37,7 +37,7 @@ public interface ICipherView {
 	 * createSymmetricCipherThirdPartyView	khởi tạo giao diện trang mã hóa
 	 * @param symmetricCipher	đối tượng thực hiện
 	 */
-	public void createSymmetricCipherThirdPartyView(SymmetricCipherThirdParty symmetricCipher);
+	public void createSymmetricCipherThirdPartyView(ISymmetricCipherThirdParty symmetricCipher);
 
 	/**
 	 * createAsymmetricCipherView	khởi tạo giao diện trang mã hóa

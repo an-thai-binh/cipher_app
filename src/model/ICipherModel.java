@@ -4,8 +4,8 @@ import model.asymmetric.AsymmetricCipher;
 import model.classical.IClassicalCipher;
 import model.hash.IHashAlgorithm;
 import model.signature.DigitalSignature;
+import model.symmetric.ISymmetricCipherThirdParty;
 import model.symmetric.SymmetricCipher;
-import model.symmetric.SymmetricCipherThirdParty;
 
 public interface ICipherModel {
 	/**
@@ -30,7 +30,7 @@ public interface ICipherModel {
 	 * @param cipher	phương pháp mã hóa
 	 * @return SymmetricCipherThirdParty
 	 */
-	public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception;
+	public ISymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception;
 
 	/**
 	 * createAsymmetricCipher	khởi tạo đối tượng mã hóa bất đối xứng

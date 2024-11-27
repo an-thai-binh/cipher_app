@@ -62,8 +62,11 @@ public class CipherFactory {
         }
     }
 
-    public SymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
-        return new SymmetricCipherThirdParty(cipher);
+    public ISymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
+        if(CipherSupport.isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY_BLOCK, cipher)) {
+            return new BlockCipherThirdParty(cipher);
+        }
+        return null;
     }
 
     public AsymmetricCipher createAsymmetricCipher(String cipher) {
