@@ -47,9 +47,6 @@ public class CipherFactory {
             case "Blowfish": {
                 return new Blowfish();
             }
-            case "ChaCha20": {
-                return new ChaCha20();
-            }
             case "RC2": {
                 return new RC2();
             }
@@ -65,6 +62,8 @@ public class CipherFactory {
     public ISymmetricCipherThirdParty createSymmetricCipherThirdParty(String cipher) throws Exception {
         if(CipherSupport.isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY_BLOCK, cipher)) {
             return new BlockCipherThirdParty(cipher);
+        } else if(CipherSupport.isContains(CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY_STREAM, cipher)) {
+            return new StreamCipherThirdParty(cipher);
         }
         return null;
     }

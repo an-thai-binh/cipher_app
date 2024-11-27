@@ -3,7 +3,6 @@ package model.symmetric;
 import utils.CipherException;
 
 import javax.crypto.*;
-import javax.crypto.spec.ChaCha20ParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -117,11 +116,7 @@ public abstract class SymmetricCipher {
      * @param bytes mảng byte đầu vào
      */
     public void setIvParameterSpec(byte[] bytes) {
-        if(this instanceof ChaCha20) {
-            this.iv = new ChaCha20ParameterSpec(bytes, 0);
-        } else {
-            this.iv = new IvParameterSpec(bytes);
-        }
+        this.iv = new IvParameterSpec(bytes);
     }
 
     /**

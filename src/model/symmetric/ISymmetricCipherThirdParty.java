@@ -38,23 +38,6 @@ public interface ISymmetricCipherThirdParty {
     public int getSupportedIvOrNonceSize();
 
     /**
-     * createMode   khởi tạo mode cùng thuật toán
-     * @param name  tên mode
-     * @param cipher    thuật toán thực hiện
-     * @return BlockCipher
-     * @throws Exception    thuật toán không hợp lệ
-     */
-    public BlockCipher createMode(String name, BlockCipher cipher) throws Exception;
-
-    /**
-     * createPadding    khởi tạo padding
-     * @param name  tên padding
-     * @return BlockCipherPadding
-     * @throws Exception    padding không hợp lệ
-     */
-    public BlockCipherPadding createPadding(String name) throws Exception;
-
-    /**
      * setCipher    cài đặt thuật toán thực hiện
      * @param mode  tên mode
      * @param padding   tên padding
