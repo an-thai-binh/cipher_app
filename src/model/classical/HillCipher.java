@@ -1,6 +1,8 @@
 package model.classical;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 
@@ -129,7 +131,7 @@ public class HillCipher implements IClassicalCipher  {
 			throw new Exception(ClassicalException.HILL_INVALID_KEY);
 		}
 		String plainText = "";
-		HashMap<Integer, Character> specialChars = new HashMap<>();
+		Map<Integer, Character> specialChars = new LinkedHashMap<>();
 		// loai bo nhung ky tu dac biet, luu ky tu dac biet cung vi tri trong map
 		for(int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
@@ -184,7 +186,7 @@ public class HillCipher implements IClassicalCipher  {
 			throw new Exception(ClassicalException.HILL_INVALID_KEY);
 		}
 		String cypherText = "";
-		HashMap<Integer, Character> specialChars = new HashMap<>();
+		Map<Integer, Character> specialChars = new LinkedHashMap<>();
 		// loai bo nhung ky tu dac biet, luu ky tu dac biet cung vi tri trong map
 		for(int i = 0; i < text.length(); i++) {
 			char c = text.charAt(i);
