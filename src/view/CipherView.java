@@ -19,7 +19,7 @@ import java.awt.event.ActionListener;
 
 public class CipherView extends JFrame implements ICipherView {
 	public CipherView() {
-		setTitle("Cipher Application");
+		setTitle("Cipher Tools");
 		setIconImage(IconUtils.LOGO_CIPHER.getImage());
 		setSize(1216, 834);
 //		setResizable(false);
