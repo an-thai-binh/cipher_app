@@ -283,7 +283,7 @@ public class SymmetricCipherView extends JPanel {
                     super.paint(g);
                 }
             });
-            if(cipher.getSupportedMode().getFirst().equals("")) cbbMode.setEnabled(false);
+            if(cipher.getSupportedMode().get(0).equals("")) cbbMode.setEnabled(false);
             cbbMode.setActionCommand("modeChange");
             cbbMode.addActionListener(this);
             pnlMode.add(lblMode, BorderLayout.WEST);
@@ -304,7 +304,7 @@ public class SymmetricCipherView extends JPanel {
                     super.paint(g);
                 }
             });
-            if(cipher.getSupportedPadding().getFirst().equals("")) cbbPadding.setEnabled(false);
+            if(cipher.getSupportedPadding().get(0).equals("")) cbbPadding.setEnabled(false);
             pnlPadding.add(lblPadding, BorderLayout.WEST);
             pnlPadding.add(cbbPadding, BorderLayout.CENTER);
             pnlSetting.add(pnlPadding);

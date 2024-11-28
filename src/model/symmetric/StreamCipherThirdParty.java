@@ -82,7 +82,7 @@ public class StreamCipherThirdParty implements ISymmetricCipherThirdParty {
      * @return KeyParameter
      */
     public KeyParameter genKey() {
-        byte[] bytes = new byte[this.getSupportedKeySize().getFirst() / 8];
+        byte[] bytes = new byte[this.getSupportedKeySize().get(0) / 8];
         SecureRandom rd = new SecureRandom();
         rd.nextBytes(bytes);
         return new KeyParameter(bytes);
@@ -103,7 +103,7 @@ public class StreamCipherThirdParty implements ISymmetricCipherThirdParty {
      */
     public void loadKey(String text) throws Exception {
         byte[] bytes = text.getBytes();
-        if(bytes.length != this.getSupportedKeySize().getFirst() / 8) {
+        if(bytes.length != this.getSupportedKeySize().get(0) / 8) {
             throw new Exception(CipherException.INVALID_KEY);
         }
         loadKey(new KeyParameter(bytes));
