@@ -177,7 +177,7 @@ public class HashAlgorithmView extends JPanel {
             pnlInputFile.setBackground(null);
             pnlInputFile.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
             // button input file
-            JButton btnInputFile = new JButton("CHỌN FILE CẦN MÃ HÓA/GIẢI MÃ");
+            JButton btnInputFile = new JButton("CHỌN FILE ĐẦU VÀO");
             btnInputFile.setVerticalTextPosition(SwingConstants.TOP);
             btnInputFile.setHorizontalTextPosition(SwingConstants.CENTER);
             btnInputFile.setBackground(Color.WHITE);

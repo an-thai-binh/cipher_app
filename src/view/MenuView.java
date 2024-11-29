@@ -57,7 +57,7 @@ public class MenuView extends JPanel {
         JPanel pnlTop = new JPanel(new GridLayout(1, 3, 20, 0));
         pnlTop.setBackground(null);
         renderMenuAlgorithm("Giải thuật cổ điển", CipherSupport.CLASSICAL_CIPHERS, pnlTop);
-        renderMenuAlgorithm("Giải thuật bất đối xứng hiện đại", ArrayUtils.concatenate(CipherSupport.SYMMETRIC_CIPHERS, CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY), pnlTop);
+        renderMenuAlgorithm("Giải thuật đối xứng hiện đại", ArrayUtils.concatenate(CipherSupport.SYMMETRIC_CIPHERS, CipherSupport.SYMMETRIC_CIPHERS_THIRD_PARTY), pnlTop);
         renderMenuAlgorithm("Giải thuật Hash", ArrayUtils.concatenate(CipherSupport.HASH_ALGORITHMS, CipherSupport.HASH_ALGORITHMS_THIRD_PARTY), pnlTop);
         pnlContent.add(pnlTop);
         // asymmetric
