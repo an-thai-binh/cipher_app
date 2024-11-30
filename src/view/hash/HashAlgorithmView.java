@@ -132,7 +132,7 @@ public class HashAlgorithmView extends JPanel {
         private void renderModeRow() {
             JPanel pnlMode = new JPanel(new FlowLayout(FlowLayout.CENTER));
             pnlMode.setBackground(null);
-            JLabel lblMode = new JLabel("Chọn chế độ:", JLabel.CENTER);
+            JLabel lblMode = new JLabel("Chọn giải thuật:", JLabel.CENTER);
             lblMode.setFont(FontUtils.createRobotoFont("medium", 16f));
             pnlMode.add(lblMode);
             cbbMode = new JComboBox(CipherSupport.SHA_DIGESTS);

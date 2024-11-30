@@ -12,7 +12,7 @@ import java.util.Base64;
 
 public class DigitalSignature {
     public static final String[] ALGORITHMS = new String[]{"RSA", "DSA"};
-    public static final String[] HASH_ALGORITHMS = new String[]{"SHA1", "SHA224", "SHA256", "SHA384", "SHA512"};
+    public static final String[] HASH_ALGORITHMS = new String[]{"SHA256", "SHA384", "SHA512"};
     public static final Integer[] KEY_SIZES = new Integer[]{2048, 3072};
     private String asymmetricCipher;
     private String hashAlgorithm;
