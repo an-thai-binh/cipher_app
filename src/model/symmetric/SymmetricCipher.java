@@ -32,8 +32,6 @@ public abstract class SymmetricCipher {
     public void setCipher(String mode, String padding) throws Exception {
         try {
             cip = Cipher.getInstance(name + "/" + mode + "/" + padding);
-            System.out.println(cip.getAlgorithm());
-            System.out.println(cip.getBlockSize());
         } catch (NoSuchAlgorithmException e) {
             throw new Exception(CipherException.NO_SUCH_ALGORITHM);
         } catch (NoSuchPaddingException e) {

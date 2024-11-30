@@ -763,7 +763,7 @@ public class SymmetricCipherView extends JPanel {
                         break;
                     }
                     File destFile = new File(dest);
-                    if(!destFile.getParentFile().exists()) {
+                    if(destFile.getParentFile() == null || !destFile.getParentFile().exists()) {
                         showErrorDialog("File đích không hợp lệ");
                         break;
                     }
